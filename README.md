@@ -24,3 +24,19 @@ from paradboxes import *
 # Usage
 
 To be finished
+
+# Support
+
+Please post an issue on this [Repository](https://github.com/NathanTurner270/Paradboxes/issues).
+
+# Roadmap
+Some cool stuff should be coming up. I'll post about it when I know.
+
+# Authors and Acknowledgements
+Author Baby - @NathanTurner270
+
+# License
+[GNU](https://choosealicense.com/licenses/gpl-3.0/)
+
+# Project Status
+In progress
