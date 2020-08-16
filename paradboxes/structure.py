@@ -1,14 +1,19 @@
+"""
+Module DocString
+"""
+
 class Cube:
+    """
+    DocString
+    """
 
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-
-    def get_area(self):
-        return self.width * self.height
-
-    def is_main_cube(self):
+    def __init__(self, ip_address, cube_number):
         pass
 
-    def change_color(self):
+    def __repr__(self):
+        # Ugly string representation
+        pass
+
+    def __str__(self):
+        # Nice string representation
         pass

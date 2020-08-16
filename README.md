@@ -4,7 +4,7 @@ Paradboxes is a Python package that simplifies the interaction between two Rasbe
 # Setup
 1. Install Python onto your computer, or Rasberry Pi, by going to [Python's Website](https://www.python.org/downloads/).
 
-2. Open the terminal you can check if python installed by typing
+2. To check if Python was install type this into your terminal:
 ~~~shell
 python --version
 ~~~
@@ -33,7 +33,7 @@ Please post an issue on this [Repository](https://github.com/NathanTurner270/Par
 Some cool stuff should be coming up. I'll post about it when I know.
 
 # Authors and Acknowledgements
-Author Baby - @NathanTurner270
+@NathanTurner270 - Author
 
 # License
 [GNU](https://choosealicense.com/licenses/gpl-3.0/)
