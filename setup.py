@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="paradboxes-NTSwizzle", # Replace with your own username
+    name="paradboxes",
     version="0.0.1",
     author="Nathan Turner",
     author_email="nathanturner270@gmail.com",
