@@ -2,8 +2,6 @@
 Module DocString
 """
 
-from enum import Enum
-
 class CubeSequence:
     """
     DocString
@@ -53,7 +51,7 @@ class LEDSequence():
         pass
 
 
-class LEDType(Enum):
+class LEDType():
     """
     DocString
     """
@@ -64,7 +62,7 @@ class LEDType(Enum):
     DECREASE = 4
 
 
-class SequenceType(Enum):
+class SequenceType():
     """
     DocString
     """
