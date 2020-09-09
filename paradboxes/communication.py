@@ -19,7 +19,7 @@ class WifiCommunication:
         pass
 
 
-class BLECommunication:
+class BluetoothCommunication:
     """
     DocString
     """

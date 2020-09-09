@@ -2,26 +2,56 @@
 Module DocString
 """
 
-import RPi.GPIO as GPIO
+from gpiozero import PWMLED
 import time
 import random
 from color import ColorChooser
 
 
-class Blink:
+class Blink(LEDSetup):
     """
     DocString
     """
 
-    def __init__(self, pins, rgb=[255, 0, 0], interval=0.1, sequence=None):
+    def __init__(self, pins, rgb=None, interval=0.1, timeout=None sequence=None, random_sequence=False):
         self.pins = pins
-        self.red, self.green, self.blue = ColorChooser(rgb).get_rpi_colors()
+        self.sequence = sequence
+        self.rgb = rgb
         self.interval = interval
-        sequence_check(sequence)
+        self.check_sequence_and_rgb_are_real()
 
-    def sequence_check(self, sequence):
-        if(sequence != None):
-            self.sequence = sequence
+    def check_sequence_and_rgb_are_real(self):
+        if self.sequence == None && self.rgb == None:
+            raise SyntaxError("No value was provided to sequence or rgb.")
+
+    def get_colors_if_not_none(self):
+        if self.rgb != None:
+            self.red, self.green, self.blue = ColorChooser(rgb).get_rpi_colors()
+
+    def sequence_exist(self):
+        if self.sequence != None:
+            return False
+        else:
+            return True
+
+    def start(self):
+        if(self.sequence_exist()):
+            self.start_sequence()
+        else:
+            pass
+
+    def start_sequence(self):
+        pass
+
+    def go_through_sequence(self):
+        pass
+
+    def change_strip_color(self, rgb):
+        pass
+
+    def set_duty_cycle(self, value):
+        pass
+
 
     def __repr__(self):
         return "Blink the LED Strip @ pins: {}, {}, {}".format(self.pins[0], self.pins[1], self.pins[2])
