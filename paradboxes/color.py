@@ -10,7 +10,7 @@ class ColorChooser():
     def __init__(self, rgb):
         self.rgb = rgb
         self.convert_rgb_to_rpi()
-        self.seperate_colors()
+        self.red, self.green, self.blue = self.seperate_colors(self.rpi)
 
     def __repr__(self):
         return "ColorChooser Object {}, red={}, green={}, blue={}".format(self, self.red, self.green, self.blue)
@@ -26,16 +26,14 @@ class ColorChooser():
             converted_color = color / 2.55
             rpi.append(color)
 
-    def seperate_colors(self):
-        self.red = self.rpi[0]
-        self.green = self.rpi[1]
-        self.blue = self.rpi[2]
+    def seperate_colors(self, list):
+        return list[0], list[1], list[2]
 
     def get_rpi_colors(self):
-        return self.red, self.green, self.blue
+        return seperate_colors(self.rpi)
 
     def get_rgb_colors(self):
-        return self.rgb
+        return seperate_colors(self.rgb)
 
 
 class Color():
