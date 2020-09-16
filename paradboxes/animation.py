@@ -187,6 +187,7 @@ class Blink():
     def __str__(self):
         return "Blink an LED Strip with {}s between blinks.".format(self.interval)
 
+
 """
 Module DocString
 """
@@ -245,18 +246,18 @@ class Color():
     DocString
     """
 
-    RED = ColorChooser([255, 0, 0]).rgb
-    GREEN = ColorChooser([0, 255, 0]).rgb
-    BLACK = ColorChooser([0, 0, 0]).rgb
-    WHITE = ColorChooser([255, 255, 255]).rgb
-    BLUE = ColorChooser([0, 0, 255]).rgb
-    CYAN = ColorChooser([0, 255, 255]).rgb
-    MAGENTA = ColorChooser([255, 0, 255]).rgb
-    SILVER = ColorChooser([192, 192, 192]).rgb
-    GRAY = ColorChooser([128, 128, 128]).rgb
-    MAROON = ColorChooser([128, 0, 0]).rgb
-    OLIVE = ColorChooser([128, 128, 0]).rgb
-    PURPLE = ColorChooser([128, 0, 128]).rgb
-    TEAL = ColorChooser([0, 128, 128]).rgb
-    NAVY = ColorChooser([0, 0, 128]).rgb
-    TURQUOISE = ColorChooser([64, 224, 208]).rgb
+    RED = ColorChooser().set_color([255, 0, 0]).rgb
+    GREEN = ColorChooser().set_color([0, 255, 0]).rgb
+    BLACK = ColorChooser().set_color([0, 0, 0]).rgb
+    WHITE = ColorChooser().set_color([255, 255, 255]).rgb
+    BLUE = ColorChooser().set_color([0, 0, 255]).rgb
+    CYAN = ColorChooser().set_color([0, 255, 255]).rgb
+    MAGENTA = ColorChooser().set_color([255, 0, 255]).rgb
+    SILVER = ColorChooser().set_color([192, 192, 192]).rgb
+    GRAY = ColorChooser().set_color([128, 128, 128]).rgb
+    MAROON = ColorChooser().set_color([128, 0, 0]).rgb
+    OLIVE = ColorChooser().set_color([128, 128, 0]).rgb
+    PURPLE = ColorChooser().set_color([128, 0, 128]).rgb
+    TEAL = ColorChooser().set_color([0, 128, 128]).rgb
+    NAVY = ColorChooser().set_color([0, 0, 128]).rgb
+    TURQUOISE = ColorChooser().set_color([64, 224, 208]).rgb
