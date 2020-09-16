@@ -6,6 +6,7 @@ from gpiozero import PWMLED
 import time
 import random
 from color import ColorChooser
+from color import Color
 
 
 class Blink():
@@ -13,10 +14,11 @@ class Blink():
     DocString
     """
 
+
     def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False):
         self.pins = pins
         self.sequence = sequence
-        self.rgb = ColorChooser(rgb).rpi
+        self.rgb = rgb
         self.interval = interval
         self.timeout = timeout
         self.random_sequence = random_sequence
@@ -24,30 +26,35 @@ class Blink():
         self.random = random
         self.seperate_pins()
         self.check_sequence_and_rgb_are_real()
-        self.get_colors_if_not_none()
+
 
     def check_sequence_and_rgb_are_real(self):
-        if self.sequence == None && self.rgb == None:
+        if self.sequence == None & & self.rgb == None:
             raise SyntaxError("No parameter was provided for sequence or rgb.")
+
 
     def seperate_pins(self):
         self.red_pin = self.pins[0]
         self.green_pin = self.pins[1]
         self.blue_pin = self.pins[2]
 
+
     def start(self):
         self.start_correct_pattern(self)
+
 
     def start_correct_function(self):
         if self.sequence_exist():
             function = self.get_correct_sequence_function()
             self.call_function_timeout_times(function)
         elif self.random and self.soft:
+            self.current_random_rgb = self.get_random_rgb()
             self.call_function_timeout_times()
         elif self.random:
             self.call_function_timeout_times()
         else:
             self.call_function_timeout_times(self.regular_start)
+
 
     def sequence_exist(self):
         if self.sequence != None:
@@ -55,47 +62,130 @@ class Blink():
         else:
             return True
 
+
     def get_correct_sequence_function(self):
         if self.random_sequence and self.soft:
+            self.current_random_rgb = self.get_random_rgb_from_sequence_index()
             return self.go_through_sequence_randomly_softly
         elif self.random_sequence:
             return self.go_through_sequence_randomly
+        elif self.soft:
+            self.current_index = 0
+            return self.go_through_sequence_softly
         else:
             return self.go_through_sequence
 
+
     def go_through_sequence_randomly_softly(self):
-        pass
+        current_random_rgb = self.current_random_rgb
+        next_random_rgb = self.get_random_rgb_from_sequence_index()
+        self.go_to_color(current_random_rgb.rgb, next_random_rgb.rgb)
+        self.current_random_rgb = next_random_rgb
+
 
     def get_random_rgb_from_sequence_index(self):
         sequence_size = len(self.sequence) - 1
         random_index = random.randint(0, sequence_size)
         random_rgb = self.sequence[random_index]
+        random_rgb = ColorChooser().set_color(random_rgb)
         return random_rgb
+
+
+    def go_to_color(self, current_rgb, next_rgb):
+        current_red, current_green, current_blue = ColorChooser().set_color(current_rgb).seperate_rgb()
+        next_red, next_green, next_blue = ColorChooser().set_color(next_rgb).seperate_rgb()
+        self.increase_decrease(current_red, next_red, self.red_pin)
+        self.increase_decrease(current_green, next_green, self.green_pin)
+        self.increase_decrease(current_blue, next_blue, self.blue_pin)
+
+
+    def increse_decrease(self, color, second_color, pin):
+        if color > second_color:
+            self.decrease_color_to_color(color, second_color)
+        else:
+            self.increase_color_to_color(color, second_color)
+
+
+    def decrese_color_to_color(self, first_color, second_color, pin):
+        for color in range(first_color, second_color-1, -1):
+            pin.value = ColorChooser().convert_rgb_to_rpi(color)
+            time.sleep(self.interval)
+
+
+    def increase_color_to_color(self, first_color, second_color, pin):
+        for color in range(first_color, second_color-1):
+            pin.value = ColorChooser().convert_rgb_to_rpi(color)
+            time.sleep(self.interval)
+
 
     def call_function_timeout_times(self, function):
         while self.timeout >= 0:
             function()
+            self.timeout -= 1
+
 
     def go_through_sequence_randomly(self):
         random_rgb = self.get_random_rgb_from_sequence_index()
         self.change_strip_color(random_rgb)
         time.sleep(self.interval)
 
+
+    def go_through_sequence_softly(self):
+        current_rgb = ColorChooser().set_color(self.sequence[self.current_index])
+
+        if self.current_index == len(self.sequence)-2:
+            self.current_index = 0
+            next_rgb = ColorChooser().set_color(self.sequence[self.current_index])
+        else:
+            next_rgb = ColorChooser().set_color(self.sequence[self.current_index+1])
+
+        self.got_to_color(current_rgb, next_rgb)
+        self.current_index += 1
+
+
     def change_strip_color(self, rgb):
         self.red_pin.value = rgb[0]
         self.green_pin.value = rgb[1]
         self.blue_pin.value = rgb[2]
+
 
     def go_through_sequence(self):
         for rgb in self.sequence:
             change_strip_color(rgb)
             time.sleep(self.interval)
 
+
+    def random_soft_start(self):
+        current_random_rgb = self.current_random_rgb
+        next_random_rgb = self.get_random_rgb_from_sequence_index()
+        self.go_to_color(current_random_rgb.rgb, next_random_rgb.rgb)
+        self.current_random_rgb = next_random_rgb
+
+
+    def get_random_rgb(self):
+        rgb = []
+        rgb.append(random.randint(0, 255))
+        rgb.append(random.randint(0, 255))
+        rgb.append(random.randint(0, 255))
+        return rgb
+
+
+    def random_start(self):
+        rgb = self.get_random_rgb()
+        self.change_strip_color()
+        time.sleep(self.interval)
+
+
     def regular_start(self):
         self.change_strip_color(self.rgb)
+        time.sleep(self.interval)
+        self.change_strip_color(Color().BLACK)
+        time.sleep(self.interval)
+
 
     def __repr__(self):
         return "Blink the LED Strip @ pins: {}, {}, {}".format(self.pins[0], self.pins[1], self.pins[2])
+
 
     def __str__(self):
         return "Blink an LED Strip with {}s between blinks.".format(self.interval)
