@@ -56,9 +56,9 @@ class Blink():
 
     def sequence_exist(self):
         if self.sequence != None:
-            return False
-        else:
             return True
+        else:
+            return False
 
 
     def get_correct_sequence_function(self):
