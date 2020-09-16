@@ -29,7 +29,7 @@ class Blink():
 
 
     def check_sequence_and_rgb_are_real(self):
-        if self.sequence == None & & self.rgb == None:
+        if self.sequence == None and self.rgb == None:
             raise SyntaxError("No parameter was provided for sequence or rgb.")
 
 
