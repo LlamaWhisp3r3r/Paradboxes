@@ -176,7 +176,7 @@ class Blink():
     def regular_start(self):
         self.change_strip_color(self.rgb)
         time.sleep(self.interval)
-        self.change_strip_color(Color().BLACK)
+        self.change_strip_color([0, 0, 0])
         time.sleep(self.interval)
 
 
@@ -240,24 +240,24 @@ class ColorChooser():
         green = self.rgb[1]
         blue = self.rgb[2]
         return red, green , blue
-
-class Color():
-    """
-    DocString
-    """
-
-    RED = ColorChooser().set_color([255, 0, 0]).rgb
-    GREEN = ColorChooser().set_color([0, 255, 0]).rgb
-    BLACK = ColorChooser().set_color([0, 0, 0]).rgb
-    WHITE = ColorChooser().set_color([255, 255, 255]).rgb
-    BLUE = ColorChooser().set_color([0, 0, 255]).rgb
-    CYAN = ColorChooser().set_color([0, 255, 255]).rgb
-    MAGENTA = ColorChooser().set_color([255, 0, 255]).rgb
-    SILVER = ColorChooser().set_color([192, 192, 192]).rgb
-    GRAY = ColorChooser().set_color([128, 128, 128]).rgb
-    MAROON = ColorChooser().set_color([128, 0, 0]).rgb
-    OLIVE = ColorChooser().set_color([128, 128, 0]).rgb
-    PURPLE = ColorChooser().set_color([128, 0, 128]).rgb
-    TEAL = ColorChooser().set_color([0, 128, 128]).rgb
-    NAVY = ColorChooser().set_color([0, 0, 128]).rgb
-    TURQUOISE = ColorChooser().set_color([64, 224, 208]).rgb
+#
+# class Color():
+#     """
+#     DocString
+#     """
+#
+#     RED = ColorChooser().set_color([255, 0, 0]).rgb
+#     GREEN = ColorChooser().set_color([0, 255, 0]).rgb
+#     BLACK = ColorChooser().set_color([0, 0, 0]).rgb
+#     WHITE = ColorChooser().set_color([255, 255, 255]).rgb
+#     BLUE = ColorChooser().set_color([0, 0, 255]).rgb
+#     CYAN = ColorChooser().set_color([0, 255, 255]).rgb
+#     MAGENTA = ColorChooser().set_color([255, 0, 255]).rgb
+#     SILVER = ColorChooser().set_color([192, 192, 192]).rgb
+#     GRAY = ColorChooser().set_color([128, 128, 128]).rgb
+#     MAROON = ColorChooser().set_color([128, 0, 0]).rgb
+#     OLIVE = ColorChooser().set_color([128, 128, 0]).rgb
+#     PURPLE = ColorChooser().set_color([128, 0, 128]).rgb
+#     TEAL = ColorChooser().set_color([0, 128, 128]).rgb
+#     NAVY = ColorChooser().set_color([0, 0, 128]).rgb
+#     TURQUOISE = ColorChooser().set_color([64, 224, 208]).rgb
