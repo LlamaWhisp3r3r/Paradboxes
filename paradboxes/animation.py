@@ -206,9 +206,9 @@ class ColorChooser():
         self.red, self.green, self.blue = self.get_converted_colors(self.rgb)
 
     def get_converted_colors(self, colors):
-        red = convert_rgb_to_rpi(colors[0])
-        green = convert_rgb_to_rpi(colors[1])
-        blue = convert_rgb_to_rpi(colors[2])
+        red = self.convert_rgb_to_rpi(colors[0])
+        green = self.convert_rgb_to_rpi(colors[1])
+        blue = self.convert_rgb_to_rpi(colors[2])
         return red, green, blue
 
     def set_rpi(self):
