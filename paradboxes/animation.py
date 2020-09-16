@@ -141,9 +141,9 @@ class Blink():
 
 
     def change_strip_color(self, rgb):
-        self.red_pin.value = rgb[0]
-        self.green_pin.value = rgb[1]
-        self.blue_pin.value = rgb[2]
+        self.red_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[0])
+        self.green_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[1])
+        self.blue_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[2])
 
 
     def go_through_sequence(self):
