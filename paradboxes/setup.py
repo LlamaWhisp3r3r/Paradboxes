@@ -35,3 +35,10 @@ class InitializeBoard:
 
     def _initialize_motion(self):
         self.motion_sensor = GPIODevice(self.motion_pin)
+
+    def get_led_pins(self):
+        pwms = []
+        pwm.append(self.red_pwm)
+        pwm.append(self.green_pwm)
+        pwm.append(self.blue_pwm)
+        return pwms
