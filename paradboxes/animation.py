@@ -87,7 +87,6 @@ class Blink():
         sequence_size = len(self.sequence) - 1
         random_index = random.randint(0, sequence_size)
         random_rgb = self.sequence[random_index]
-        random_rgb = ColorChooser().set_color(random_rgb)
         return random_rgb
 
 
@@ -131,13 +130,13 @@ class Blink():
 
 
     def go_through_sequence_softly(self):
-        current_rgb = ColorChooser().set_color(self.sequence[self.current_index])
+        current_rgb = self.sequence[self.current_index]
 
         if self.current_index == len(self.sequence)-2:
             self.current_index = 0
-            next_rgb = ColorChooser().set_color(self.sequence[self.current_index])
+            next_rgb = self.sequence[self.current_index]
         else:
-            next_rgb = ColorChooser().set_color(self.sequence[self.current_index+1])
+            next_rgb = self.sequence[self.current_index+1]
 
         self.got_to_color(current_rgb, next_rgb)
         self.current_index += 1
@@ -158,7 +157,7 @@ class Blink():
     def random_soft_start(self):
         current_random_rgb = self.current_random_rgb
         next_random_rgb = self.get_random_rgb_from_sequence_index()
-        self.go_to_color(current_random_rgb.rgb, next_random_rgb.rgb)
+        self.go_to_color(current_random_rgb, next_random_rgb)
         self.current_random_rgb = next_random_rgb
 
 
