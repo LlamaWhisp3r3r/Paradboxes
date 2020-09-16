@@ -38,7 +38,7 @@ class InitializeBoard:
 
     def get_led_pins(self):
         pwms = []
-        pwm.append(self.red_pwm)
-        pwm.append(self.green_pwm)
-        pwm.append(self.blue_pwm)
+        pwms.append(self.red_pwm)
+        pwms.append(self.green_pwm)
+        pwms.append(self.blue_pwm)
         return pwms
