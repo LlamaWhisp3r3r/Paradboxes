@@ -38,7 +38,7 @@ class Blink():
 
 
     def start(self):
-        self.start_correct_function(self)
+        self.start_correct_function()
 
 
     def start_correct_function(self):
