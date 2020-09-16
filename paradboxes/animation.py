@@ -148,7 +148,7 @@ class Blink():
 
     def go_through_sequence(self):
         for rgb in self.sequence:
-            change_strip_color(rgb)
+            self.change_strip_color(rgb)
             time.sleep(self.interval)
 
 
