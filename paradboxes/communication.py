@@ -55,8 +55,8 @@ class Bluetooth:
         self.server = bl.BluetoothSocket()
         self.server.bind(("", port))
         self.server.listen(1)
-        bl.advertise_service(server_sock, name, uuid)
-        self.client_sock, address = self.scoket.accept()
+        bl.advertise_service(self.server, name, uuid)
+        self.client_sock, address = self.server.accept()
 
 
     def wait_for_message(self):
