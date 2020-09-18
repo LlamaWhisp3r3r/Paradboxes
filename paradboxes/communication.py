@@ -47,9 +47,17 @@ class Bluetooth:
 
         self.socket = bl.BluetoothSocket()
         self.socket.connect((host, port))
+        print("Connected to : {}, at {} host".format(name, host))
 
     def start_cube(self):
         self.socket.send("start")
+
+    def close_socket(self):
+        self.socket.close()
+
+    def close_server(self):
+        self.server.close()
+        self.client_sock.close()
 
     def start_server(self, name, uuid, port):
         self.server = bl.BluetoothSocket()
@@ -57,6 +65,10 @@ class Bluetooth:
         self.server.listen(1)
         bl.advertise_service(self.server, name, uuid)
         self.client_sock, address = self.server.accept()
+        print("Accepted Connected to {}".format(self.client_sock))
+        data = self.client_sock.recv(1024)
+        print("Received:")
+        print(data)
 
 
     def wait_for_message(self):
