@@ -55,7 +55,7 @@ class Bluetooth:
         self.server = bl.BluetoothSocket()
         self.server.bind(("", port))
         self.server.listen(1)
-        bluetooth.advertise_service(server_sock, name, uuid)
+        bl.advertise_service(server_sock, name, uuid)
         self.client_sock, address = self.scoket.accept()
 
 
