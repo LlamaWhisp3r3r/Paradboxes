@@ -63,4 +63,7 @@ class Bluetooth:
         while True:
             data = self.client_sock.recv(1024)
             if data == "start":
+                print("Message is start")
+            elif data == "stop":
+                print("Going to stop now...")
                 break
