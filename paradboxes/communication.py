@@ -21,7 +21,7 @@ class WifiCommunication:
         pass
 
 
-class BluetoothCommunication:
+class Bluetooth:
     """
     DocString
     """
@@ -53,9 +53,8 @@ class BluetoothCommunication:
 
     def start_server(self, name, uuid, port):
         self.server = bl.BluetoothSocket()
-        self.socket.bind(("", port))
-        self.socket.listen(1)
-        uuid = uuid
+        self.server.bind(("", port))
+        self.server.listen(1)
         bluetooth.advertise_service(server_sock, name, uuid)
         self.client_sock, address = self.scoket.accept()
 
