@@ -8,7 +8,7 @@ Blink(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequ
 ColorChooser()
 """
 
-
+import logging
 from gpiozero import PWMLED
 import time
 import random
@@ -39,6 +39,8 @@ class Blink():
 
 
     def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False):
+        logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
+        logging.info("Created Blink Object")
         self.pins = pins
         self.sequence = sequence
         self.rgb = rgb
@@ -68,6 +70,7 @@ class Blink():
         """
 
 
+        logging.info("Started an LED Strip Blink Animation")
         self.start_correct_function()
 
 
@@ -107,6 +110,7 @@ class Blink():
 
 
     def go_through_sequence_randomly_softly(self):
+        logging.info("Starting random soft sequence LED Strip Animation")
         current_random_rgb = self.current_random_rgb
         next_random_rgb = self.get_random_rgb_from_sequence_index()
         self.go_to_color(current_random_rgb.rgb, next_random_rgb.rgb)
@@ -123,9 +127,11 @@ class Blink():
     def go_to_color(self, current_rgb, next_rgb):
         current_red, current_green, current_blue = ColorChooser().set_color(current_rgb).seperate_rgb()
         next_red, next_green, next_blue = ColorChooser().set_color(next_rgb).seperate_rgb()
+        logging.info("Changing LED Strip color from {} to {}".format(current_rgb, next_rgb))
         self.increase_decrease(current_red, next_red, self.red_pin)
         self.increase_decrease(current_green, next_green, self.green_pin)
         self.increase_decrease(current_blue, next_blue, self.blue_pin)
+        logging.info("Changed LED Strip color from {} to {}".format(current_rgb, next_rgb))
 
 
     def increse_decrease(self, color, second_color, pin):
@@ -154,12 +160,14 @@ class Blink():
 
 
     def go_through_sequence_randomly(self):
+        logging.info("Starting random sequence LED Strip Animation")
         random_rgb = self.get_random_rgb_from_sequence_index()
         self.change_strip_color(random_rgb)
         time.sleep(self.interval)
 
 
     def go_through_sequence_softly(self):
+        logging.info("Starting softly sequence LED Strip Animation")
         current_rgb = self.sequence[self.current_index]
 
         if self.current_index == len(self.sequence)-2:
@@ -173,18 +181,21 @@ class Blink():
 
 
     def change_strip_color(self, rgb):
+        logging.info("Changing LED Strip color to {}".format(rgb))
         self.red_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[0])
         self.green_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[1])
         self.blue_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[2])
 
 
     def go_through_sequence(self):
+        logging.info("Starting regular sequence LED Strip Animation")
         for rgb in self.sequence:
             self.change_strip_color(rgb)
             time.sleep(self.interval)
 
 
     def random_soft_start(self):
+        logging.info("Starting random soft LED Strip Animation")
         current_random_rgb = self.current_random_rgb
         next_random_rgb = self.get_random_rgb()
         self.go_to_color(current_random_rgb, next_random_rgb)
@@ -200,18 +211,21 @@ class Blink():
 
 
     def random_start(self):
+        logging.info("Starting random LED Strip Animation")
         rgb = self.get_random_rgb()
         self.change_strip_color(rgb)
         time.sleep(self.interval)
 
 
     def regular_start(self):
+        logging.info("Starting regular LED Strip Animation")
         self.change_strip_color(self.rgb)
         time.sleep(self.interval)
         self.change_strip_color([0, 0, 0])
         time.sleep(self.interval)
 
     def chaos_start(self):
+        logging.info("Starting choas LED Strip Animation")
         interval = random.randint(0, 100)/100
         rgb = self.get_random_rgb()
         self.change_strip_color(rgb)

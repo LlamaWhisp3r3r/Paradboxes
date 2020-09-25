@@ -13,6 +13,7 @@ import digitalio
 import busio
 import adafruit_lis3dh
 import adafruit_tcs34725
+import logging
 
 
 class InitializeBoard:
@@ -26,6 +27,8 @@ class InitializeBoard:
 
 
     def __init__(self, int_pin, motion_pin, led_pins):
+        logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
+        logging.info("Created Board Object")
         self.int_pin = int_pin
         self.led_pins = led_pins
         self.motion_pin = motion_pin
@@ -43,16 +46,19 @@ class InitializeBoard:
         interupt_pin = digitalio.DigitalInOut(board.D6)
         self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=interupt_pin)
         self.color_sensor = adafruit_tcs34725.TCS34725(i2c)
+        logging.info("I2C buses initialized")
 
 
     def _initialize_led(self):
         self.red_pwm = PWMLED(self.led_pins[0])
         self.green_pwm = PWMLED(self.led_pins[1])
         self.blue_pwm = PWMLED(self.led_pins[2])
+        logging.info("LED Pins initialized")
 
 
     def _initialize_motion(self):
         self.motion_sensor = GPIODevice(self.motion_pin)
+        logging.info("Motion Sensor intialized")
 
 
     def get_led_pins(self):

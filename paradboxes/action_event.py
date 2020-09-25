@@ -10,6 +10,7 @@ import busio
 import adafruit_lis3dh
 import adafruit_tcs34725
 import time
+import logging
 
 
 class ActionEvents:
@@ -21,6 +22,11 @@ class ActionEvents:
     accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False, timeout=600)
     motion_event(self, data_pin, callback)
     """
+
+    def __init__(self):
+        logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
+        logging.info("ActionEvent Object created")
+
 
 
     def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False, timeout=600):
@@ -40,6 +46,7 @@ class ActionEvents:
         """
 
 
+        logging.info("Accelerometer Event created")
         self.accelerometer = accelerometer
         self.accel_callback = callback
         self.timeout = timeout
@@ -67,8 +74,10 @@ class ActionEvents:
         while tracker <= timeout:
             time_mark = time.time()
             if self.accelerometer.tapped:
+                logging.info("Single Tap Detected")
                 self.run_callback(self.accel_callback)
             tracker = time_mark - time.time()
+        logging.info("Waiting for tap timeout")
         self.run_callback(self.accel_callback)
 
 
@@ -82,6 +91,7 @@ class ActionEvents:
         # Wait for first touch
         while True:
             if self.accelerometer.tapped:
+                logging.info("Single Tap detected")
                 break
         # Record touch time
         time_intervals = [time.time()]
@@ -91,6 +101,7 @@ class ActionEvents:
         while overall_time <= 10:
             beginning_time = time.time()
             if self.accelerometer.tapped:
+                logging.info("Single Tap detected")
                 # Get current time stamp of when the accelerometer was pressed
                 time_intervals.append(time.time())
                 # Hope and pray that .1 s is fast enough to capture all the taps
@@ -100,7 +111,7 @@ class ActionEvents:
             # of the current loop
             overall_time = time.time() - beginning_time
 
-        self.run_callback(self.accel_callback, value=overall_time)
+        self.run_callback(self.accel_callback, value=time_intervals)
 
 
     def motion_event(self, data_pin, callback):
@@ -126,6 +137,7 @@ class ActionEvents:
         flag = self.pin_equals_zero()
         while flag:
             flag = self.pin_equal_zero()
+        logging.info("Motion Detected")
         self.run_callback(self.motion_callback)
 
 
@@ -154,6 +166,7 @@ class ActionEvents:
         """
 
 
+        logging.info("Callback run for action event")
         # Check is value if callback needs a parameter
         if value == None:
             callback()
