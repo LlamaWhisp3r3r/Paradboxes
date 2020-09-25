@@ -126,8 +126,10 @@ class Blink():
 
 
     def go_to_color(self, current_rgb, next_rgb):
-        current_red, current_green, current_blue = ColorChooser().set_color(current_rgb).seperate_rgb()
-        next_red, next_green, next_blue = ColorChooser().set_color(next_rgb).seperate_rgb()
+        color_one = ColorChooser().set_color(current_rgb)
+        color_two = ColorChooser().set_color(next_rgb)
+        current_red, current_green, current_blue = color_one.seperate_rgb()
+        next_red, next_green, next_blue = color_two.seperate_rgb()
         logging.info("Changing LED Strip color from {} to {}".format(current_rgb, next_rgb))
         self.increase_decrease(current_red, next_red, self.red_pin)
         self.increase_decrease(current_green, next_green, self.green_pin)
@@ -246,10 +248,6 @@ class ColorChooser():
     Holder for colors in two types. rpi, a 0-1 value (mostly used in the gpiozero.PWMLED)\
     rgb, a 0-255 value.
     """
-
-    def __init__(self):
-        self.rgb = list()
-        self.rpi = list()
 
 
     def set_color(self, rgb):
