@@ -247,6 +247,9 @@ class ColorChooser():
     rgb, a 0-255 value.
     """
 
+    def __init__(self):
+        pass
+
 
     def set_color(self, rgb):
         """

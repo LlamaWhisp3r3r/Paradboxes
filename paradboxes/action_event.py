@@ -51,7 +51,7 @@ class ActionEvents:
         self.accel_callback = callback
         self.timeout = timeout
         # Get the type of action that you want to wait for
-        if Tap:
+        if tap:
             self.accelerometer.set_tap(1, sensitivity)
             self.wait_for_tap()
         elif double_tap:
