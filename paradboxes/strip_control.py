@@ -284,7 +284,7 @@ class ColorChooser():
         green = self.rpi[1]
         blue = self.rpi[2]
         return red, green , blue
-        
+
 
     def seperate_rgb(self):
         red = self.rgb[0]

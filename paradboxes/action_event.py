@@ -18,12 +18,12 @@ class ActionEvents:
 
     Functions:
 
-    accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False)
+    accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False, timeout=600)
     motion_event(self, data_pin, callback)
     """
 
 
-    def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False):
+    def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False, timeout=600):
         """
         Call back a given function when the specfied action event happens on the accelerometer.\
         You can set multiple action events to be true, but not all the action events \
@@ -36,11 +36,13 @@ class ActionEvents:
         :param tap : a single tap of the accelerometer. Action event
         :param double_tap : a double tap of the accelerometer. Action event
         :param multiple_tap : records the sequence of taps in a 10 second time period. Action event
+        :param timeout : the amount of time that it takes for the wait to timeout. Defaults to 600 seconds
         """
 
 
         self.accelerometer = accelerometer
         self.accel_callback = callback
+        self.timeout = timeout
         # Get the type of action that you want to wait for
         if Tap:
             self.accelerometer.set_tap(1, sensitivity)
@@ -61,9 +63,13 @@ class ActionEvents:
         """
 
 
-        while True:
+        tracker = 0
+        while tracker <= timeout:
+            time_mark = time.time()
             if self.accelerometer.tapped:
                 self.run_callback(self.accel_callback)
+            tracker = time_mark - time.time()
+        self.run_callback(self.accel_callback)
 
 
     def wait_for_multiple_tap(self):
