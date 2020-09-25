@@ -248,7 +248,9 @@ class ColorChooser():
     """
 
     def __init__(self):
-        pass
+        self.rgb = list()
+        self.rpi = list()
+        self.red, self.green, self.blue = int()
 
 
     def set_color(self, rgb):
