@@ -126,8 +126,10 @@ class Blink():
 
 
     def go_to_color(self, current_rgb, next_rgb):
-        color_one = ColorChooser().set_color(current_rgb)
-        color_two = ColorChooser().set_color(next_rgb)
+        color_one = ColorChooser(current_rgb)
+        print(type(color_one))
+        color_two = ColorChooser(next_rgb)
+        print(type(color_two))
         current_red, current_green, current_blue = color_one.seperate_rgb()
         next_red, next_green, next_blue = color_two.seperate_rgb()
         logging.info("Changing LED Strip color from {} to {}".format(current_rgb, next_rgb))
@@ -146,13 +148,13 @@ class Blink():
 
     def decrese_color_to_color(self, first_color, second_color, pin):
         for color in range(first_color, second_color-1, -1):
-            pin.value = ColorChooser().convert_rgb_to_rpi(color)
+            pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(color)
             time.sleep(self.interval)
 
 
     def increase_color_to_color(self, first_color, second_color, pin):
         for color in range(first_color, second_color-1):
-            pin.value = ColorChooser().convert_rgb_to_rpi(color)
+            pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(color)
             time.sleep(self.interval)
 
 
@@ -185,9 +187,9 @@ class Blink():
 
     def change_strip_color(self, rgb):
         logging.info("Changing LED Strip color to {}".format(rgb))
-        self.red_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[0])
-        self.green_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[1])
-        self.blue_pin.value = ColorChooser().convert_rgb_to_rpi(rgb[2])
+        self.red_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
+        self.green_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
+        self.blue_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
 
 
     def go_through_sequence(self):
@@ -248,9 +250,10 @@ class ColorChooser():
     Holder for colors in two types. rpi, a 0-1 value (mostly used in the gpiozero.PWMLED)\
     rgb, a 0-255 value.
     """
-    def __init__(self):
-        self.rgb = list()
-        self.rpi = list()
+    def __init__(self, rgb):
+        self.rgb = rgb
+        self.rpi = []
+        self.red, self.green, self.blue = self.get_converted_colors(self.rgb)
 
 
     def set_color(self, rgb):
