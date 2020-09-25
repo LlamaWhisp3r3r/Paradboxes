@@ -126,7 +126,8 @@ class Blink():
 
 
     def go_to_color(self, current_rgb, next_rgb):
-        color_one = ColorChooser().set_color(current_rgb)
+        color_one = ColorChooser()
+        pritn(type(color_one))
         color_two = ColorChooser().set_color(next_rgb)
         current_red, current_green, current_blue = color_one.seperate_rgb()
         next_red, next_green, next_blue = color_two.seperate_rgb()
@@ -248,6 +249,9 @@ class ColorChooser():
     Holder for colors in two types. rpi, a 0-1 value (mostly used in the gpiozero.PWMLED)\
     rgb, a 0-255 value.
     """
+    def __init__(self):
+        self.rgb = list()
+        self.rpi = list()
 
 
     def set_color(self, rgb):
