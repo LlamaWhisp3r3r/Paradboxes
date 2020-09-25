@@ -34,34 +34,6 @@ class SequenceFormat:
         pass
 
 
-class LEDSequence():
-    """
-    DocString
-    """
-
-    def __init__(self, type=LEDType.DEFAULT, interval=5):
-        pass
-
-    def __repr__(self):
-        # Ugly string representation
-        pass
-
-    def __str__(self):
-        # Nice string representation
-        pass
-
-
-class LEDType():
-    """
-    DocString
-    """
-
-    DEFAULT = 1
-    ON_OFF = 2
-    INCREASE = 3
-    DECREASE = 4
-
-
 class SequenceType():
     """
     DocString

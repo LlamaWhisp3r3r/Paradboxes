@@ -1,5 +1,5 @@
 # Paradboxes
-Paradboxes is a Python package that simplifies the interaction between two Rasberry Pi's with external sensors.
+Paradboxes eases the process of making paradboxes for Industrial Art & Design. Providing board layout and setup, action events, led strip control, communications, and a sequence manager. All of these help provide you, the programmer, with a set of adaptive and expandable tools for your coding experience.
 
 # Setup
 1. Install Python onto your computer, or Rasberry Pi, by going to [Python's Website](https://www.python.org/downloads/).
@@ -21,9 +21,9 @@ python -m pip install git+https://github.com/NathanTurner270/Paradboxes.git
 from paradboxes import *
 ~~~
 
-# Usage
+# Usage / Documentation
 
-To be finished
+You can read the documentation at our [documentation page]() in the Github wiki.
 
 # Support
 

@@ -1,6 +1,13 @@
 """
-Module DocString
+Provide high level control of the led strip color scheme. Currently only provides you\
+with one led strip color control class, blink.
+
+Classes:
+
+Blink(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False)
+ColorChooser()
 """
+
 
 from gpiozero import PWMLED
 import time
@@ -9,11 +16,29 @@ import random
 
 class Blink():
     """
-    DocString
+    Blinks an led strip in many different ways. Given that there are many different ways this can blink there is\
+    an importance order. The order is:
+    sequence, random, chaos, regular
+    If soft is combined with any of these except chaos & regular than it is more important then if it didn't have soft.\
+    For example within sequence there is an importance order:
+    (random_sequence, soft), (random_sequence), (soft), (regular)
+    The random is as follows:
+    (soft), (regular)
+
+
+    :param pins : list of pins for the led strip to control. Should be arranged as [redPin, greenPin, bluePin]
+    :param rgb : list of rgb value. Should be arranged as [red, green, blue]. Defaults to None
+    :param interval : the interval of change between colors. This value can differ depending on the effects
+    :param timeout : How many times the light sequence will go through a cycle before timing out
+    :param sequence : a list of rgb values. Arrangement should be [[rgb], [rgb], [rgb], ...]
+    :param random_sequence : determines if you want the sequence to be shuffled through randomly
+    :param soft : makes the colors change smoothly
+    :param random : force the strip to go through colors randomly
+    :param chaos : random colors and random intervals. Soft can not be combined with this
     """
 
 
-    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False):
+    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False):
         self.pins = pins
         self.sequence = sequence
         self.rgb = rgb
@@ -27,8 +52,8 @@ class Blink():
 
 
     def check_sequence_and_rgb_are_real(self):
-        if self.sequence == None and self.rgb == None:
-            raise SyntaxError("No parameter was provided for sequence or rgb.")
+        if self.sequence == None and self.rgb == None and not chaos, and not random:
+            raise SyntaxError("No parameter was provided for sequence, rgb, random, or chaos. Please provide a parameter for one of these values")
 
 
     def seperate_pins(self):
@@ -38,6 +63,11 @@ class Blink():
 
 
     def start(self):
+        """
+        Starts the correct function based on the parameters that were passed in
+        """
+
+
         self.start_correct_function()
 
 
@@ -47,9 +77,11 @@ class Blink():
             self.call_function_timeout_times(function)
         elif self.random and self.soft:
             self.current_random_rgb = self.get_random_rgb()
-            self.call_function_timeout_times()
+            self.call_function_timeout_times(self.random_soft_start)
         elif self.random:
-            self.call_function_timeout_times()
+            self.call_function_timeout_times(self.random_start)
+        elif self.chaos:
+            self.call_function_timeout_times(self.chaos_start)
         else:
             self.call_function_timeout_times(self.regular_start)
 
@@ -154,7 +186,7 @@ class Blink():
 
     def random_soft_start(self):
         current_random_rgb = self.current_random_rgb
-        next_random_rgb = self.get_random_rgb_from_sequence_index()
+        next_random_rgb = self.get_random_rgb()
         self.go_to_color(current_random_rgb, next_random_rgb)
         self.current_random_rgb = next_random_rgb
 
@@ -169,7 +201,7 @@ class Blink():
 
     def random_start(self):
         rgb = self.get_random_rgb()
-        self.change_strip_color()
+        self.change_strip_color(rgb)
         time.sleep(self.interval)
 
 
@@ -178,6 +210,12 @@ class Blink():
         time.sleep(self.interval)
         self.change_strip_color([0, 0, 0])
         time.sleep(self.interval)
+
+    def chaos_start(self):
+        interval = random.randint(0, 100)/100
+        rgb = self.get_random_rgb()
+        self.change_strip_color(rgb)
+        time.sleep(interval)
 
 
     def __repr__(self):
@@ -188,28 +226,32 @@ class Blink():
         return "Blink an LED Strip with {}s between blinks.".format(self.interval)
 
 
-"""
-Module DocString
-"""
-
 class ColorChooser():
     """
-    DocString
+    Holder for colors in two types. rpi, a 0-1 value (mostly used in the gpiozero.PWMLED)\
+    rgb, a 0-255 value.
     """
 
-    def __init__(self):
-        pass
 
     def set_color(self, rgb):
+        """
+        Sets the color of the object to the parameter
+
+        :param rgb : list of rgb values. Arranged as so [red, green, blue]
+        """
+
+
         self.rgb = rgb
         self.rpi = []
         self.red, self.green, self.blue = self.get_converted_colors(self.rgb)
+
 
     def get_converted_colors(self, colors):
         red = self.convert_rgb_to_rpi(colors[0])
         green = self.convert_rgb_to_rpi(colors[1])
         blue = self.convert_rgb_to_rpi(colors[2])
         return red, green, blue
+
 
     def set_rpi(self):
         self.rpi.append(self.red)
@@ -224,16 +266,25 @@ class ColorChooser():
         return "Color is: red={}, green={}, blue={}".format(self.red, self.green, self.blue)
 
     def convert_rgb_to_rpi(self, color):
+        """
+        Converts the rgb value, the parameter, into a rpi value.
+
+        :param color : rgb value to be converted
+        """
+
+
         # RPi uses values 0-100 to determine the brightness of the r, g, or b
         # So to convert regular rgb values to rpi values we need to divide by 255
         converted_color = color / 255
         return converted_color
+
 
     def seperate_rpi(self):
         red = self.rpi[0]
         green = self.rpi[1]
         blue = self.rpi[2]
         return red, green , blue
+        
 
     def seperate_rgb(self):
         red = self.rgb[0]

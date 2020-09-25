@@ -1,6 +1,11 @@
 """
-Module DocString
+Provide nessicary board setup for raspberry pi.
+
+Classes:
+
+InitializeBoard(int_pin, motion_pin, led_pins)
 """
+
 
 from gpiozero import *
 import board
@@ -9,7 +14,16 @@ import busio
 import adafruit_lis3dh
 import adafruit_tcs34725
 
+
 class InitializeBoard:
+    """
+    Set board components up for raspberry pi.
+
+    :param int_pin : interupt pin number for accelerometer
+    :param motion_pin : data pin number for motion sensor
+    :param led_pins : lsit of pin numbers for led pins. Order should be [redPin, greenPin, bluePin]
+    """
+
 
     def __init__(self, int_pin, motion_pin, led_pins):
         self.int_pin = int_pin
@@ -17,10 +31,12 @@ class InitializeBoard:
         self.motion_pin = motion_pin
         self._initialize_components()
 
+
     def _initialize_components(self):
         self._initialize_i2c()
         self._initialize_led()
         self._initialize_motion()
+
 
     def _initialize_i2c(self):
         i2c = busio.I2C(board.SCL, board.SDA)
@@ -28,15 +44,26 @@ class InitializeBoard:
         self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=interupt_pin)
         self.color_sensor = adafruit_tcs34725.TCS34725(i2c)
 
+
     def _initialize_led(self):
         self.red_pwm = PWMLED(self.led_pins[0])
         self.green_pwm = PWMLED(self.led_pins[1])
         self.blue_pwm = PWMLED(self.led_pins[2])
 
+
     def _initialize_motion(self):
         self.motion_sensor = GPIODevice(self.motion_pin)
 
+
     def get_led_pins(self):
+        """
+        Return list of led pins in the form of a gpiozero.PWMLED object
+
+        :return pwms : list of led pwms
+        :rtype pwms : gpiozero.PWNLED
+        """
+
+
         pwms = []
         pwms.append(self.red_pwm)
         pwms.append(self.green_pwm)
