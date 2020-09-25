@@ -139,7 +139,7 @@ class Blink():
         logging.info("Changed LED Strip color from {} to {}".format(current_rgb, next_rgb))
 
 
-    def increse_decrease(self, color, second_color, pin):
+    def increase_decrease(self, color, second_color, pin):
         if color > second_color:
             self.decrease_color_to_color(color, second_color)
         else:
