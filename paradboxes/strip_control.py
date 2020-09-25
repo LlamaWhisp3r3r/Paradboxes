@@ -49,12 +49,13 @@ class Blink():
         self.random_sequence = random_sequence
         self.soft = soft
         self.random = random
+        self.chaos = chaos
         self.seperate_pins()
         self.check_sequence_and_rgb_are_real()
 
 
     def check_sequence_and_rgb_are_real(self):
-        if self.sequence == None and self.rgb == None and not chaos and not random:
+        if self.sequence == None and self.rgb == None and not self.chaos and not self.random:
             raise SyntaxError("No parameter was provided for sequence, rgb, random, or chaos. Please provide a parameter for one of these values")
 
 
