@@ -136,7 +136,7 @@ class ActionEvents:
 
         flag = self.pin_equals_zero()
         while flag:
-            flag = self.pin_equal_zero()
+            flag = self.pin_equals_zero()
         logging.info("Motion Detected")
         self.run_callback(self.motion_callback)
 
