@@ -71,15 +71,19 @@ class ActionEvents:
 
 
         tracker = 0
+        called = False
         while tracker <= self.timeout:
             time_mark = time.time()
             if self.accelerometer.tapped:
                 logging.info("Single Tap Detected")
                 self.run_callback(self.accel_callback)
+                called = True
                 break
-            tracker += time_mark - time.time()
+            time.sleep(0.1)
+            tracker += (time_mark - time.time())
         logging.info("Waiting for tap timeout")
-        self.run_callback(self.accel_callback)
+        if not called:
+            self.run_callback(self.accel_callback)
 
 
     def wait_for_multiple_tap(self):
