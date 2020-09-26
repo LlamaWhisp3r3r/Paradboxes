@@ -127,9 +127,7 @@ class Blink():
 
     def go_to_color(self, current_rgb, next_rgb):
         color_one = ColorChooser(current_rgb)
-        print(type(color_one))
         color_two = ColorChooser(next_rgb)
-        print(type(color_two))
         current_red, current_green, current_blue = color_one.seperate_rgb()
         next_red, next_green, next_blue = color_two.seperate_rgb()
         logging.info("Changing LED Strip color from {} to {}".format(current_rgb, next_rgb))

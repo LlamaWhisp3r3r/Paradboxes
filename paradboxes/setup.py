@@ -43,7 +43,7 @@ class InitializeBoard:
 
     def _initialize_i2c(self):
         i2c = busio.I2C(board.SCL, board.SDA)
-        interupt_pin = digitalio.DigitalInOut(board.D6)
+        interupt_pin = digitalio.DigitalInOut(self.int_pin)
         self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=interupt_pin)
         self.color_sensor = adafruit_tcs34725.TCS34725(i2c)
         logging.info("I2C buses initialized")
