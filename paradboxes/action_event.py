@@ -155,7 +155,7 @@ class ActionEvents:
 
 
         # Check if sensor senses something
-        if self.data_pin.value == 1:
+        if self.data_pin.value == 0:
             return True
         else:
             return False

@@ -75,3 +75,10 @@ class InitializeBoard:
         pwms.append(self.green_pwm)
         pwms.append(self.blue_pwm)
         return pwms
+
+    def close_all(self):
+        self.red_pwm.close()
+        self.green_pwm.close()
+        self.blue_pwm.close()
+        self.motion_sensor.close()
+        logging.info("Closed all the pins")
