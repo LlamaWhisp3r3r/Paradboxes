@@ -146,13 +146,13 @@ class Blink():
 
     def decrease_color_to_color(self, first_color, second_color, pin):
         for color in range(first_color, second_color-1, -1):
-            pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(color)
+            pin.value = color / 255
             time.sleep(self.interval)
 
 
     def increase_color_to_color(self, first_color, second_color, pin):
         for color in range(first_color, second_color-1):
-            pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(color)
+            pin.value = color / 255
             time.sleep(self.interval)
 
 
