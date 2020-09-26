@@ -76,7 +76,8 @@ class ActionEvents:
             if self.accelerometer.tapped:
                 logging.info("Single Tap Detected")
                 self.run_callback(self.accel_callback)
-            tracker = time_mark - time.time()
+                break
+            tracker += time_mark - time.time()
         logging.info("Waiting for tap timeout")
         self.run_callback(self.accel_callback)
 
