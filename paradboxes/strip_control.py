@@ -38,7 +38,7 @@ class Blink():
     """
 
 
-    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False):
+    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
         logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
         logging.info("Created Blink Object")
         self.pins = pins
@@ -50,6 +50,8 @@ class Blink():
         self.soft = soft
         self.random = random
         self.chaos = chaos
+        self.random_rgb_start = random_rgb_start
+        self.current_color = []
         self.seperate_pins()
         self.check_sequence_and_rgb_are_real()
 
@@ -80,7 +82,10 @@ class Blink():
             function = self.get_correct_sequence_function()
             self.call_function_timeout_times(function)
         elif self.random and self.soft:
-            self.current_random_rgb = self.get_random_rgb()
+            if self.random_rgb_start != None:
+                self.current_random_rgb == self.random_rgb_start
+            else:
+                self.current_random_rgb == self.get_random_rgb()
             self.call_function_timeout_times(self.random_soft_start)
         elif self.random:
             self.call_function_timeout_times(self.random_start)
@@ -135,6 +140,7 @@ class Blink():
         self.increase_decrease(current_green, next_green, self.green_pin)
         self.increase_decrease(current_blue, next_blue, self.blue_pin)
         logging.info("Changed LED Strip color from {} to {}".format(current_rgb, next_rgb))
+        self.current_color = next_rgb
 
 
     def increase_decrease(self, color, second_color, pin):
@@ -179,12 +185,13 @@ class Blink():
         else:
             next_rgb = self.sequence[self.current_index+1]
 
-        self.got_to_color(current_rgb, next_rgb)
+        self.go_to_color(current_rgb, next_rgb)
         self.current_index += 1
 
 
     def change_strip_color(self, rgb):
         logging.info("Changing LED Strip color to {}".format(rgb))
+        self.current_color = rgb
         self.red_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
         self.green_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
         self.blue_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
