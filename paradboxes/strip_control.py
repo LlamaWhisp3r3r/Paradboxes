@@ -83,9 +83,9 @@ class Blink():
             self.call_function_timeout_times(function)
         elif self.random and self.soft:
             if self.random_rgb_start != None:
-                self.current_random_rgb == self.random_rgb_start
+                self.current_random_rgb = self.random_rgb_start
             else:
-                self.current_random_rgb == self.get_random_rgb()
+                self.current_random_rgb = self.get_random_rgb()
             self.call_function_timeout_times(self.random_soft_start)
         elif self.random:
             self.call_function_timeout_times(self.random_start)
