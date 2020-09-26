@@ -141,12 +141,12 @@ class Blink():
 
     def increase_decrease(self, color, second_color, pin):
         if color > second_color:
-            self.decrease_color_to_color(color, second_color)
+            self.decrease_color_to_color(color, second_color, pin)
         else:
-            self.increase_color_to_color(color, second_color)
+            self.increase_color_to_color(color, second_color, pin)
 
 
-    def decrese_color_to_color(self, first_color, second_color, pin):
+    def decrease_color_to_color(self, first_color, second_color, pin):
         for color in range(first_color, second_color-1, -1):
             pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(color)
             time.sleep(self.interval)
