@@ -128,8 +128,6 @@ class ActionEvents:
             beginning_time = time.time()
             if self.accelerometer.tapped:
                 logging.info("Single Tap detected")
-                # Get current time stamp of when the accelerometer was pressed
-                time_intervals.append(time.time())
                 # Hope and pray that .1 s is fast enough to capture all the taps
                 # Without getting in the users way
                 time.sleep(0.1)
