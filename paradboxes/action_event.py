@@ -60,7 +60,7 @@ class ActionEvents:
             self.wait_for_tap()
         elif multiple_tap:
             self.accelerometer.set_tap(1, sensitivity)
-            self.wait_for_tap_sequence()
+            self.wait_for_multiple_tap()
         elif tap_amount != None:
             self.accelerometer.set_tap(1, sensitivity)
             self.wait_for_tap_amount()
