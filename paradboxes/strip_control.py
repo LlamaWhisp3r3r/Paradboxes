@@ -230,6 +230,8 @@ class Blink():
         if self.interval_sequence != None:
             self.current_interval_index +=1
             self.interval = self.interval_sequence[self.current_interval_index]
+        time.sleep(0.1)
+        self.change_strip_color([0, 0, 0])
         time.sleep(self.interval)
 
 
