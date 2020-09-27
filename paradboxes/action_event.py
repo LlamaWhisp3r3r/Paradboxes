@@ -96,14 +96,8 @@ class ActionEvents:
         the callback function and call the callback function
         """
 
-
-        # Wait for first touch
-        while True:
-            if self.accelerometer.tapped:
-                logging.info("Single Tap detected")
-                break
         # Record touch time
-        time_intervals = [time.time()]
+        time_intervals = []
         # Record Overall_time
         overall_time = 0
         # Go through the loop until 10 seconds has passed
