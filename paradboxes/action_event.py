@@ -135,7 +135,7 @@ class ActionEvents:
             # Record the different between the current time and the strating time
             # of the current loop
             overall_time = time.time() - beginning_time
-            if this_tap_count >= self.tap_count:
+            if this_tap_count >= self.tap_amount:
                 break
 
         self.run_callback(self.accel_callback, value=this_tap_count)
