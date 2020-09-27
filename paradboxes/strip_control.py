@@ -38,7 +38,7 @@ class Blink():
     """
 
 
-    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
+    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
         logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
         logging.info("Created Blink Object")
         self.pins = pins
@@ -47,6 +47,7 @@ class Blink():
         self.interval = interval
         self.timeout = timeout
         self.random_sequence = random_sequence
+        self.interval_sequence = interval_sequence
         self.soft = soft
         self.random = random
         self.chaos = chaos
@@ -88,6 +89,8 @@ class Blink():
                 self.current_random_rgb = self.get_random_rgb()
             self.call_function_timeout_times(self.random_soft_start)
         elif self.random:
+            if self.interval_sequence != None:
+                self.current_interval_index = -1
             self.call_function_timeout_times(self.random_start)
         elif self.chaos:
             self.call_function_timeout_times(self.chaos_start)
@@ -224,6 +227,9 @@ class Blink():
         logging.info("Starting random LED Strip Animation")
         rgb = self.get_random_rgb()
         self.change_strip_color(rgb)
+        if self.interval_sequence != None:
+            self.current_interval_index +=1
+            self.interval = self.interval_sequence[self.current_interval_index]
         time.sleep(self.interval)
 
 

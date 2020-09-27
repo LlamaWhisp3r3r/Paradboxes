@@ -8,6 +8,7 @@ WifiComunication()
 """
 
 import bluetooth as bl
+import logging
 
 class WifiCommunication:
     """
@@ -60,6 +61,7 @@ class Bluetooth:
 
             self.socket = bl.BluetoothSocket()
             self.socket.connect((host, port))
+            logging.info("Connected to {} on port {}".format(name, port))
         else:
             # TODO: Create logging
             pass
@@ -125,6 +127,7 @@ class Bluetooth:
         self.server.listen(1)
         bl.advertise_service(self.server, name, uuid)
         self.client_sock, address = self.server.accept()
+        logging.info("Device Connected with address {}".format(address))
 
 
     def wait_for_message(self, callback):

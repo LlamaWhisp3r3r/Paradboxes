@@ -29,7 +29,7 @@ class ActionEvents:
 
 
 
-    def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, multiple_tap=False, timeout=600):
+    def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, tap_amount=None, multiple_tap=False, timeout=600, multiple_tap_interval=10):
         """
         Call back a given function when the specfied action event happens on the accelerometer.\
         You can set multiple action events to be true, but not all the action events \
@@ -50,6 +50,7 @@ class ActionEvents:
         self.accelerometer = accelerometer
         self.accel_callback = callback
         self.timeout = timeout
+        self.multiple_tap_interval = multiple_tap_interval
         # Get the type of action that you want to wait for
         if tap:
             self.accelerometer.set_tap(1, sensitivity)
@@ -60,6 +61,9 @@ class ActionEvents:
         elif multiple_tap:
             self.accelerometer.set_tap(1, sensitivity)
             self.wait_for_tap_sequence()
+        elif tap_amount != None:
+            self.accelerometer.set_tap(1, sensitivity)
+            self.wait_for_tap_amount()
         else:
             raise SyntaxError("No action event was set.")
 
@@ -103,7 +107,7 @@ class ActionEvents:
         # Record Overall_time
         overall_time = 0
         # Go through the loop until 10 seconds has passed
-        while overall_time <= 10:
+        while overall_time <= self.timeout:
             beginning_time = time.time()
             if self.accelerometer.tapped:
                 logging.info("Single Tap detected")
@@ -114,9 +118,35 @@ class ActionEvents:
                 time.sleep(0.1)
             # Record the different between the current time and the strating time
             # of the current loop
-            overall_time = time.time() - beginning_time
+            overall_time += time.time() - beginning_time
 
         self.run_callback(self.accel_callback, value=time_intervals)
+
+
+    def wait_for_tap_amount(self):
+
+
+        # Record Overall_time
+        overall_time = 0
+        this_tap_count = 0
+        # Go through the loop until 10 seconds has passed
+        while overall_time <= self.timeout:
+            beginning_time = time.time()
+            if self.accelerometer.tapped:
+                logging.info("Single Tap detected")
+                # Get current time stamp of when the accelerometer was pressed
+                time_intervals.append(time.time())
+                # Hope and pray that .1 s is fast enough to capture all the taps
+                # Without getting in the users way
+                time.sleep(0.1)
+                this_tap_count +=1
+            # Record the different between the current time and the strating time
+            # of the current loop
+            overall_time = time.time() - beginning_time
+            if this_tap_count >= self.tap_count:
+                break
+
+        self.run_callback(self.accel_callback, value=this_tap_count)
 
 
     def motion_event(self, data_pin, callback):
