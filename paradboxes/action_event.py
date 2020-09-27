@@ -109,7 +109,7 @@ class ActionEvents:
                 time_intervals.append(time.time())
                 # Hope and pray that .1 s is fast enough to capture all the taps
                 # Without getting in the users way
-                time.sleep(0.1)
+                time.sleep(0.2)
             # Record the different between the current time and the strating time
             # of the current loop
             overall_time += time.time() - beginning_time
