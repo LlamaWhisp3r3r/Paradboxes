@@ -53,7 +53,7 @@ class Bluetooth:
 
         service_matches = bl.find_service(uuid = uuid)
 
-        if service_matches != None:
+        if len(service_matches) != 0:
             first_match = service_matches[0]
             port = first_match["port"]
             name = first_match["name"]
@@ -63,8 +63,8 @@ class Bluetooth:
             self.socket.connect((host, port))
             logging.info("Connected to {} on port {}".format(name, port))
         else:
-            # TODO: Create logging
-            pass
+            logging.info("Could not connect to the device")
+            self.connect_to_device(uuid)
 
 
     def send_message(self, start=True, independent=False, custom=False, message=""):
