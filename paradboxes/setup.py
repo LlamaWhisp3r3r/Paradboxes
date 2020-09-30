@@ -32,7 +32,7 @@ class InitializeBoard:
         self.int_pin = int_pin
         self.led_pins = led_pins
         self.motion_pin = motion_pin
-        self._initialize_components()
+        self.i2c = busio.I2C(board.SCL, board.SDA)
 
 
     def _initialize_components(self):
@@ -42,11 +42,16 @@ class InitializeBoard:
 
 
     def _initialize_i2c(self):
-        i2c = busio.I2C(board.SCL, board.SDA)
+        self._initialize_color_sensor()
+        self._initialize_accelerometer()
+        logging.info("I2C buses initialized")
+
+    def _initialize_accelerometer(self):
         interupt_pin = digitalio.DigitalInOut(self.int_pin)
         self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=interupt_pin)
-        self.color_sensor = adafruit_tcs34725.TCS34725(i2c)
-        logging.info("I2C buses initialized")
+
+    def _initialize_color_sensor(self):
+        self.color_sensor = adafruit_tcs34725.TCS34725(self.i2c)
 
 
     def _initialize_led(self):
