@@ -9,6 +9,7 @@ WifiComunication()
 
 import bluetooth as bl
 import logging
+import time
 
 class WifiCommunication:
     """
@@ -143,4 +144,5 @@ class Bluetooth:
             data = str(self.client_sock.recv(1024))
             if data != "":
                 break
+            time.sleep(0.1)
         callback(data)
