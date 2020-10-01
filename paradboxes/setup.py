@@ -48,7 +48,7 @@ class InitializeBoard:
 
     def _initialize_accelerometer(self):
         interupt_pin = digitalio.DigitalInOut(self.int_pin)
-        self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=interupt_pin)
+        self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(self.i2c, int1=interupt_pin)
 
     def _initialize_color_sensor(self):
         self.color_sensor = adafruit_tcs34725.TCS34725(self.i2c)
