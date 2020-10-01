@@ -58,9 +58,9 @@ class InitializeBoard:
         self.red_pwm = PWMLED(self.led_pins[0])
         self.green_pwm = PWMLED(self.led_pins[1])
         self.blue_pwm = PWMLED(self.led_pins[2])
-        self.red_pwm.frequency = 80
-        self.green_pwm.frequency = 80
-        self.blue_pwm.frequency = 80
+        self.red_pwm.frequency = 60
+        self.green_pwm.frequency = 60
+        self.blue_pwm.frequency = 60
         logging.info("LED Pins initialized")
 
 
