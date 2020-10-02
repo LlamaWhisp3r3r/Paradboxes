@@ -194,7 +194,7 @@ class Blink():
 
     def change_strip_color(self, rgb):
         #logging.info("Changing LED Strip color to {}".format(rgb))
-        self.current_color = rgb
+        #self.current_color = rgb
         self.red_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
         self.green_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
         self.blue_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
