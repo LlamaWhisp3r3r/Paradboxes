@@ -8,6 +8,7 @@ InitializeBoard(int_pin, motion_pin, led_pins)
 
 
 from gpiozero import *
+# from something.PCA9685 import PWM
 import board
 import digitalio
 import busio
@@ -26,11 +27,12 @@ class InitializeBoard:
     """
 
 
-    def __init__(self, int_pin, motion_pin, led_pins):
+    def __init__(self, int_pin, motion_pin, led_address, led_channels):
         logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
         logging.info("Created Board Object")
         self.int_pin = int_pin
-        self.led_pins = led_pins
+        self.led_address = led_address
+        self.led_channels = led_channels
         self.motion_pin = motion_pin
         self.i2c = busio.I2C(board.SCL, board.SDA)
 
@@ -55,12 +57,9 @@ class InitializeBoard:
 
 
     def _initialize_led(self):
-        self.red_pwm = PWMLED(self.led_pins[0])
-        self.green_pwm = PWMLED(self.led_pins[1])
-        self.blue_pwm = PWMLED(self.led_pins[2])
-        self.red_pwm.frequency = 70
-        self.green_pwm.frequency = 70
-        self.blue_pwm.frequency = 70
+        self.red_pwm = PWM(address=self.led_address)
+        self.green_pwm = PWM(address=self.led_address)
+        self.blue_pwm = PWM(address=self.led_address)
         logging.info("LED Pins initialized")
 
 

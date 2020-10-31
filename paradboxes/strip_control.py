@@ -9,7 +9,6 @@ ColorChooser()
 """
 
 import logging
-from gpiozero import PWMLED
 import time
 import random
 
@@ -38,10 +37,11 @@ class Blink():
     """
 
 
-    def __init__(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
+    def __init__(self, pins, pin_channels=[0, 1, 2], rgb=None, interval=0.1, timeout=10, sequence=None, interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
         logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
         logging.info("Created Blink Object")
         self.pins = pins
+        self.pin_channels = pin_channels
         self.sequence = sequence
         self.rgb = rgb
         self.interval = interval
@@ -66,6 +66,9 @@ class Blink():
         self.red_pin = self.pins[0]
         self.green_pin = self.pins[1]
         self.blue_pin = self.pins[2]
+        self.red_channel = self.pin_channels[0]
+        self.green_channel = self.pin_channels[1]
+        self.blue_channel = self.pin_channels[2]
 
 
     def start(self):
@@ -139,29 +142,31 @@ class Blink():
         current_red, current_green, current_blue = color_one.seperate_rgb()
         next_red, next_green, next_blue = color_two.seperate_rgb()
         logging.info("Changing LED Strip color from {} to {}".format(current_rgb, next_rgb))
-        self.increase_decrease(current_red, next_red, self.red_pin)
-        self.increase_decrease(current_green, next_green, self.green_pin)
-        self.increase_decrease(current_blue, next_blue, self.blue_pin)
+        self.increase_decrease(current_red, next_red, self.red_pin, self.red_channel)
+        self.increase_decrease(current_green, next_green, self.green_pin, self.green_channel)
+        self.increase_decrease(current_blue, next_blue, self.blue_pin, self.blue_channel)
         logging.info("Changed LED Strip color from {} to {}".format(current_rgb, next_rgb))
         self.current_color = next_rgb
 
 
-    def increase_decrease(self, color, second_color, pin):
+    def increase_decrease(self, color, second_color, pin, channel):
         if color > second_color:
-            self.decrease_color_to_color(color, second_color, pin)
+            self.decrease_color_to_color(color, second_color, pin, channel)
         else:
-            self.increase_color_to_color(color, second_color, pin)
+            self.increase_color_to_color(color, second_color, pin, channel)
 
 
-    def decrease_color_to_color(self, first_color, second_color, pin):
+    def decrease_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1, -1):
-            pin.value = color / 255
+            value = 4095 - ((color / 255) * 4095)
+            pin.write(channel, 0, value)
             time.sleep(self.interval)
 
 
-    def increase_color_to_color(self, first_color, second_color, pin):
+    def increase_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1):
-            pin.value = color / 255
+            value = 4095 - ((color / 255) * 4095)
+            pin.write(channel, 0, value)
             time.sleep(self.interval)
 
 
@@ -194,10 +199,13 @@ class Blink():
 
     def change_strip_color(self, rgb):
         #logging.info("Changing LED Strip color to {}".format(rgb))
-        #self.current_color = rgb
-        self.red_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
-        self.green_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
-        self.blue_pin.value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
+        self.current_color = rgb
+        red_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
+        green_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
+        blue_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
+        self.red_pin.write(self.red_channel, 0, red_value)
+        self.green_pin.write(self.green_channel, 0, green_value)
+        self.blue_pin.write(self.blue_channel, 0, blue_value)
 
 
     def go_through_sequence(self):
@@ -311,7 +319,8 @@ class ColorChooser():
 
         # RPi uses values 0-100 to determine the brightness of the r, g, or b
         # So to convert regular rgb values to rpi values we need to divide by 255
-        converted_color = color / 255
+        # Then multiple it by 4095 so that the pwm pin can read the value
+        converted_color = 4095 - ((color / 255) * 4095)
         return converted_color
 
 
