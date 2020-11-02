@@ -159,6 +159,7 @@ class Blink():
     def decrease_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1, -1):
             value = 4095 - int(((color / 255) * 4095))
+            print("Value is : {}".format(value))
             pin.write(channel, 0, value)
             time.sleep(self.interval)
 
@@ -166,6 +167,7 @@ class Blink():
     def increase_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1):
             value = 4095 - int(((color / 255) * 4095))
+            print("Value is : {}".format(value))
             pin.write(channel, 0, value)
             time.sleep(self.interval)
 
@@ -203,6 +205,7 @@ class Blink():
         red_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
         green_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
         blue_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
+        print("Value is : {}".format(red_value))
         self.red_pin.write(self.red_channel, 0, red_value)
         self.green_pin.write(self.green_channel, 0, green_value)
         self.blue_pin.write(self.blue_channel, 0, blue_value)
