@@ -158,14 +158,14 @@ class Blink():
 
     def decrease_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1, -1):
-            value = 4095 - ((color / 255) * 4095)
+            value = 4095 - int(((color / 255) * 4095))
             pin.write(channel, 0, value)
             time.sleep(self.interval)
 
 
     def increase_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1):
-            value = 4095 - ((color / 255) * 4095)
+            value = 4095 - int(((color / 255) * 4095))
             pin.write(channel, 0, value)
             time.sleep(self.interval)
 
@@ -320,7 +320,7 @@ class ColorChooser():
         # RPi uses values 0-100 to determine the brightness of the r, g, or b
         # So to convert regular rgb values to rpi values we need to divide by 255
         # Then multiple it by 4095 so that the pwm pin can read the value
-        converted_color = 4095 - ((color / 255) * 4095)
+        converted_color = 4095 - int(((color / 255) * 4095))
         return converted_color
 
 
