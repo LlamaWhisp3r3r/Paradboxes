@@ -37,7 +37,7 @@ class Blink():
     """
 
 
-    def __init__(self, pins, pin_channels=[0, 1, 2], rgb=None, interval=0.1, timeout=10, sequence=None, interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
+    def __init__(self, pins, pin_channels=[12, 8, 4], rgb=None, interval=0.1, timeout=10, sequence=None, interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
         logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
         logging.info("Created Blink Object")
         self.pins = pins
