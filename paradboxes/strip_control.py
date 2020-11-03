@@ -160,7 +160,7 @@ class Blink():
         for color in range(first_color, second_color-1, -1):
             on_value = int(((color / 255) * 4095))
             off_value = int(4095 - ((color / 255) * 4095))
-            pin.write(channel, 0, off_value)
+            pin.write(channel, on_value, off_value)
             time.sleep(self.interval)
 
 
@@ -168,7 +168,7 @@ class Blink():
         for color in range(first_color, second_color-1):
             on_value = int(((color / 255) * 4095))
             off_value = int(4095 - ((color / 255) * 4095))
-            pin.write(channel, 0, off_value)
+            pin.write(channel, on_value, off_value)
             time.sleep(self.interval)
 
 
@@ -205,9 +205,9 @@ class Blink():
         red_on, red_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
         green_on, green_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
         blue_on, blue_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
-        self.red_pin.write(self.red_channel, 0, red_off)
-        self.green_pin.write(self.green_channel, 0, green_off)
-        self.blue_pin.write(self.blue_channel, 0, blue_off)
+        self.red_pin.write(self.red_channel, red_on, red_off)
+        self.green_pin.write(self.green_channel, red_on, green_off)
+        self.blue_pin.write(self.blue_channel, red_on, blue_off)
 
 
     def go_through_sequence(self):
