@@ -158,15 +158,17 @@ class Blink():
 
     def decrease_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1, -1):
-            value = 4095 - int(((color / 255) * 4095))
-            pin.write(channel, 0, value)
+            on_value = int(((color / 255) * 4095))
+            off_value = int(4095 - ((color / 255) * 4095))
+            pin.write(channel, on_value, off_value)
             time.sleep(self.interval)
 
 
     def increase_color_to_color(self, first_color, second_color, pin, channel):
         for color in range(first_color, second_color-1):
-            value = 4095 - int(((color / 255) * 4095))
-            pin.write(channel, 0, value)
+            on_value = int(((color / 255) * 4095))
+            off_value = int(4095 - ((color / 255) * 4095))
+            pin.write(channel, on_value, off_value)
             time.sleep(self.interval)
 
 
@@ -200,12 +202,12 @@ class Blink():
     def change_strip_color(self, rgb):
         #logging.info("Changing LED Strip color to {}".format(rgb))
         self.current_color = rgb
-        red_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
-        green_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
-        blue_value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
-        self.red_pin.write(self.red_channel, 0, red_value)
-        self.green_pin.write(self.green_channel, 0, green_value)
-        self.blue_pin.write(self.blue_channel, 0, blue_value)
+        red_on, red_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
+        green_on, green_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
+        blue_on, blue_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
+        self.red_pin.write(self.red_channel, red_on, red_off)
+        self.green_pin.write(self.green_channel, green_on, green_off)
+        self.blue_pin.write(self.blue_channel, blue_on, blue_off)
 
 
     def go_through_sequence(self):
@@ -320,8 +322,9 @@ class ColorChooser():
         # RPi uses values 0-100 to determine the brightness of the r, g, or b
         # So to convert regular rgb values to rpi values we need to divide by 255
         # Then multiple it by 4095 so that the pwm pin can read the value
-        converted_color = 4095 - int(((color / 255) * 4095))
-        return converted_color
+        on_color = int(((color / 255) * 4095))
+        off_color = int(4095 - ((color / 255) * 4095))
+        return on_color, off_color
 
 
     def seperate_rpi(self):
