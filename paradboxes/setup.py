@@ -62,6 +62,9 @@ class InitializeBoard:
         self.red_pwm.setup()
         self.green_pwm.setup()
         self.blue_pwm.setup()
+        self.red_pwm.frequency(200)
+        self.green_pwm.frequency(200)
+        self.blue_pwm.frequency(200)
         logging.info("LED Pins initialized")
 
 
