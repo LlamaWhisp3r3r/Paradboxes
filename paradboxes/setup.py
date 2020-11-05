@@ -59,6 +59,9 @@ class InitializeBoard:
         self.red_pwm = PWM(address=self.led_address)
         self.green_pwm = PWM(address=self.led_address)
         self.blue_pwm = PWM(address=self.led_address)
+        self.red_pwm.setup()
+        self.green_pwm.setup()
+        self.blue_pwm.setup()
         logging.info("LED Pins initialized")
 
 
