@@ -29,7 +29,7 @@ class ActionEvents:
 
 
 
-    def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, tap_amount=None, multiple_tap=False, timeout=600, multiple_tap_interval=10):
+    def accelerometer_event(self, accelerometer, callback, sensitivity=60, tap=True, double_tap=False, tap_amount=None, multiple_tap=False, timeout=60, multiple_tap_interval=10):
         """
         Call back a given function when the specfied action event happens on the accelerometer.\
         You can set multiple action events to be true, but not all the action events \
@@ -77,7 +77,7 @@ class ActionEvents:
 
         tracker = 0
         called = False
-        while tracker <= self.timeout:
+        while tracker < self.timeout:
             time_mark = time.time()
             if self.accelerometer.tapped:
                 logging.info("Single Tap Detected")
@@ -85,7 +85,7 @@ class ActionEvents:
                 called = True
                 break
             time.sleep(0.1)
-            tracker += (time_mark - time.time())
+            tracker += time.time() - time_mark
         logging.info("Waiting for tap timeout")
         if not called:
             self.run_callback(self.accel_callback)
