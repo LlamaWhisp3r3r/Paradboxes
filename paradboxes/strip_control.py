@@ -5,7 +5,7 @@ with one led strip color control class, blink.
 Classes:
 
 Blink(self, pins, channels=[12, 8, 4], rgb=None, interval=0.1, timeout=10, sequence=None,
-      interval_sequence=None, random_sequence=False, soft=False, random_flag=False, chaos=False, random_rgb_start=None)
+      interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None)
 ColorChooser(rgb)
 """
 
@@ -34,13 +34,13 @@ class Blink:
     :param sequence : a list of rgb values. Arrangement should be [[rgb], [rgb], [rgb], ...]
     :param random_sequence : determines if you want the sequence to be shuffled through randomly
     :param soft : makes the colors change smoothly
-    :param random_flag : force the strip to go through colors randomly
+    :param random : force the strip to go through colors randomly
     :param chaos : random colors and random intervals. Soft can not be combined with this
     :param random_rgb_start : starting point for random colors. Defaults to None
     """
 
     def __init__(self, pwm, channels=[12, 8, 4], rgb=None, interval=0.1, timeout=10, sequence=None,
-                 interval_sequence=None, random_sequence=False, soft=False, random_flag=False, chaos=False,
+                 interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False,
                  random_rgb_start=None):
 
         # Configure logging
@@ -59,7 +59,7 @@ class Blink:
         self.random_sequence = random_sequence
         self.interval_sequence = interval_sequence
         self.soft = soft
-        self.random = random_flag
+        self.random = random
         self.chaos = chaos
         self.random_rgb_start = random_rgb_start
         self.current_color = []
@@ -68,7 +68,7 @@ class Blink:
 
     def __check_sequence_and_rgb_are_real(self):
         if self.sequence is None and self.rgb is None and not self.chaos and not self.random:
-            raise SyntaxError("No parameter was provided for sequence, rgb, random_flag, or chaos. Please provide a "
+            raise SyntaxError("No parameter was provided for sequence, rgb, random, or chaos. Please provide a "
                               "parameter for one of these values")
 
     def __separate_channels(self):
@@ -126,7 +126,7 @@ class Blink:
 
     def __go_through_sequence_randomly_softly(self):
 
-        logging.info("Starting random_flag soft sequence LED Strip Animation")
+        logging.info("Starting random soft sequence LED Strip Animation")
         current_random_rgb = self.current_random_rgb
         next_random_rgb = self.__get_random_rgb_from_sequence_index()
         self.go_to_color(current_random_rgb.rgb, next_random_rgb.rgb)
@@ -196,7 +196,7 @@ class Blink:
             self.timeout -= 1
 
     def __go_through_sequence_randomly(self):
-        logging.info("Starting random_flag sequence LED Strip Animation")
+        logging.info("Starting random sequence LED Strip Animation")
         random_rgb = self.__get_random_rgb_from_sequence_index()
         self.change_strip_color(random_rgb)
         time.sleep(self.interval)
@@ -239,7 +239,7 @@ class Blink:
             time.sleep(self.interval)
 
     def __random_soft_start(self):
-        logging.info("Starting random_flag soft LED Strip Animation")
+        logging.info("Starting random soft LED Strip Animation")
         current_random_rgb = self.current_random_rgb
         next_random_rgb = self.__get_random_rgb()
         self.go_to_color(current_random_rgb, next_random_rgb)
@@ -253,7 +253,7 @@ class Blink:
         return rgb
 
     def __random_start(self):
-        logging.info("Starting random_flag LED Strip Animation")
+        logging.info("Starting random LED Strip Animation")
         rgb = self.__get_random_rgb()
         self.change_strip_color(rgb)
         if self.interval_sequence is not None:
