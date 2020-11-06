@@ -30,13 +30,17 @@ You can read the documentation at our [documentation page]() in the Github wiki.
 Please post an issue on this [Repository](https://github.com/NathanTurner270/Paradboxes/issues).
 
 # Roadmap
-Some cool stuff should be coming up. I'll post about it when I know.
+There are a lot of patches I want to add. Here are some:
+
+1. Local host website that will be able to change the cubes
+2. Unit, Suite, and Runner tests
+3. Database for logs, warnings, and failures
 
 # Authors and Acknowledgements
-@NathanTurner270 - Author
+Nathan Turner - Authors
 
 # License
 [GNU](https://choosealicense.com/licenses/gpl-3.0/)
 
 # Project Status
-In progress
+[![Documentation Status](https://readthedocs.org/projects/paradboxes/badge/?version=latest)](https://paradboxes.readthedocs.io/en/latest/?badge=latest)
