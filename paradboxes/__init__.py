@@ -1,6 +1,6 @@
 """
 Author: Nathan Turner
-Version: 1.0
+Version: 1.0.1
 Company: Industrial Art & Design
 Contact: nathanturner270@gmail.com
 

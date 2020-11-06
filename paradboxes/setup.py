@@ -1,9 +1,15 @@
 """
-Provide nessicary board setup for raspberry pi.
+Provide necessary board setup for raspberry pi and connected devices.
+The supported connected devices are:
+- PCA9685 LED Driver
+- TCS34725 Color Sensor
+- LIS3DH Accelerometer
+- Motion Sensor
 
 Classes:
 
 InitializeBoard(int_pin, motion_pin, led_pins)
+PWM(bus_number=None, address=0x40)
 """
 
 
@@ -13,6 +19,9 @@ import digitalio
 import busio
 import adafruit_lis3dh
 import adafruit_tcs34725
+import smbus
+import time
+import math
 import logging
 
 
@@ -20,84 +29,83 @@ class InitializeBoard:
     """
     Set board components up for raspberry pi.
 
-    :param int_pin : interupt pin number for accelerometer
+    :param int_pin : interrupt pin number for accelerometer
     :param motion_pin : data pin number for motion sensor
-    :param led_pins : lsit of pin numbers for led pins. Order should be [redPin, greenPin, bluePin]
+    :param led_address : address for PCA9685 LED Driver
+    :param led_channels : list of channels for LED Driver in this order: [redChannel, greenChannel, blueChannel]
     """
 
-
     def __init__(self, int_pin, motion_pin, led_address, led_channels):
+
         logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
         logging.info("Created Board Object")
+
         self.int_pin = int_pin
         self.led_address = led_address
         self.led_channels = led_channels
         self.motion_pin = motion_pin
         self.i2c = busio.I2C(board.SCL, board.SDA)
 
-
     def _initialize_components(self):
+        """
+        Initialize all the connected components
+        """
+
         self._initialize_i2c()
         self._initialize_led()
         self._initialize_motion()
 
-
     def _initialize_i2c(self):
+        """
+        Initialize only the I2C devices. (Color Sensor, Accelerometer)
+        """
+
         self._initialize_color_sensor()
         self._initialize_accelerometer()
         logging.info("I2C buses initialized")
 
     def _initialize_accelerometer(self):
-        interupt_pin = digitalio.DigitalInOut(self.int_pin)
-        self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(self.i2c, int1=interupt_pin)
+        """
+        Initialize only the Accelerometer
+        """
+
+        interrupt_pin = digitalio.DigitalInOut(self.int_pin)
+        self.accelerometer = adafruit_lis3dh.LIS3DH_I2C(self.i2c, int1=interrupt_pin)
 
     def _initialize_color_sensor(self):
+        """
+        Initialize only the Color Sensor
+        """
+
         self.color_sensor = adafruit_tcs34725.TCS34725(self.i2c)
 
-
     def _initialize_led(self):
-        self.red_pwm = PWM(address=self.led_address)
-        self.green_pwm = PWM(address=self.led_address)
-        self.blue_pwm = PWM(address=self.led_address)
-        self.red_pwm.setup()
-        self.green_pwm.setup()
-        self.blue_pwm.setup()
-        self.red_pwm.frequency = 150
-        self.green_pwm.frequency = 150
-        self.blue_pwm.frequency = 150
+        """
+        Initialize only the LED Driver
+        """
+
+        self.pwm = PWM(address=self.led_address)
+        self.pwm.setup()
+        self.pwm.frequency = 150
         logging.info("LED Pins initialized")
 
-
     def _initialize_motion(self):
+        """
+        Initialize only the Motion Sensor
+        """
+
         self.motion_sensor = GPIODevice(self.motion_pin)
-        logging.info("Motion Sensor intialized")
-
-
-    def get_led_pins(self):
-        """
-        Return list of led pins in the form of a gpiozero.PWMLED object
-
-        :return pwms : list of led pwms
-        :rtype pwms : gpiozero.PWNLED
-        """
-
-
-        pwms = []
-        pwms.append(self.red_pwm)
-        pwms.append(self.green_pwm)
-        pwms.append(self.blue_pwm)
-        return pwms
+        logging.info("Motion Sensor initialized")
 
     def close_all(self):
-        self.red_pwm.close()
-        self.green_pwm.close()
-        self.blue_pwm.close()
+        """
+        Close all the connected devices that don't close by themselves
+        """
+
         self.motion_sensor.close()
         logging.info("Closed all the pins")
 
 
-
-#!/usr/bin/python
 '''
 **********************************************************************
 * Filename    : PCA9685.py
@@ -113,9 +121,6 @@ This class is not my work. All credit goes to SunFounder and Cavon for creating
 this class. Thank you for making this open source
 '''
 
-import smbus
-import time
-import math
 
 class PWM(object):
     """A PWM control class for PCA9685."""

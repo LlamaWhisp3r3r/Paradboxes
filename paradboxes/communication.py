@@ -13,7 +13,7 @@ import time
 
 class WifiCommunication:
     """
-    DocString
+    Not Yet Added
     """
 
     def __init__(self):

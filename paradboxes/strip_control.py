@@ -4,8 +4,9 @@ with one led strip color control class, blink.
 
 Classes:
 
-Blink(self, pins, rgb=None, interval=0.1, timeout=10, sequence=None, random_sequence=False, soft=False, random=False, chaos=False)
-ColorChooser()
+Blink(self, pins, channels=[12, 8, 4], rgb=None, interval=0.1, timeout=10, sequence=None,
+      interval_sequence=None, random_sequence=False, soft=False, random_flag=False, chaos=False, random_rgb_start=None)
+ColorChooser(rgb)
 """
 
 import logging
@@ -13,35 +14,44 @@ import time
 import random
 
 
-class Blink():
+class Blink:
     """
-    Blinks an led strip in many different ways. Given that there are many different ways this can blink there is\
+    Blinks an led strip in many different ways. Given that there are many different ways this can blink there is
     an importance order. The order is:
     sequence, random, chaos, regular
-    If soft is combined with any of these except chaos & regular than it is more important then if it didn't have soft.\
+    If soft is combined with any of these except chaos & regular than it is more important then if it didn't have soft.
     For example within sequence there is an importance order:
     (random_sequence, soft), (random_sequence), (soft), (regular)
     The random is as follows:
     (soft), (regular)
 
 
-    :param pins : list of pins for the led strip to control. Should be arranged as [redPin, greenPin, bluePin]
+    :param pwm : pwm object
+    :param channels : list of channels in the following order: [redChannel, blueChannel, greenChannel]
     :param rgb : list of rgb value. Should be arranged as [red, green, blue]. Defaults to None
     :param interval : the interval of change between colors. This value can differ depending on the effects
     :param timeout : How many times the light sequence will go through a cycle before timing out
     :param sequence : a list of rgb values. Arrangement should be [[rgb], [rgb], [rgb], ...]
     :param random_sequence : determines if you want the sequence to be shuffled through randomly
     :param soft : makes the colors change smoothly
-    :param random : force the strip to go through colors randomly
+    :param random_flag : force the strip to go through colors randomly
     :param chaos : random colors and random intervals. Soft can not be combined with this
+    :param random_rgb_start : starting point for random colors. Defaults to None
     """
 
+    def __init__(self, pwm, channels=[12, 8, 4], rgb=None, interval=0.1, timeout=10, sequence=None,
+                 interval_sequence=None, random_sequence=False, soft=False, random_flag=False, chaos=False,
+                 random_rgb_start=None):
 
-    def __init__(self, pins, pin_channels=[12, 8, 4], rgb=None, interval=0.1, timeout=10, sequence=None, interval_sequence=None, random_sequence=False, soft=False, random=False, chaos=False, random_rgb_start=None):
-        logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log", level=logging.INFO)
+        # Configure logging
+        if channels is None:
+            channels = [12, 8, 4]
+        logging.basicConfig(format="%(message)s %(asctime)s", datefmt=" ---[%m/%d/%y %I:%M:%S %p]", filename="log.log",
+                            level=logging.INFO)
         logging.info("Created Blink Object")
-        self.pins = pins
-        self.pin_channels = pin_channels
+
+        self.pwm = pwm
+        self.channels = channels
         self.sequence = sequence
         self.rgb = rgb
         self.interval = interval
@@ -49,235 +59,240 @@ class Blink():
         self.random_sequence = random_sequence
         self.interval_sequence = interval_sequence
         self.soft = soft
-        self.random = random
+        self.random = random_flag
         self.chaos = chaos
         self.random_rgb_start = random_rgb_start
         self.current_color = []
-        self.seperate_pins()
-        self.check_sequence_and_rgb_are_real()
+        self.__separate_channels()
+        self.__check_sequence_and_rgb_are_real()
 
+    def __check_sequence_and_rgb_are_real(self):
+        if self.sequence is None and self.rgb is None and not self.chaos and not self.random:
+            raise SyntaxError("No parameter was provided for sequence, rgb, random_flag, or chaos. Please provide a "
+                              "parameter for one of these values")
 
-    def check_sequence_and_rgb_are_real(self):
-        if self.sequence == None and self.rgb == None and not self.chaos and not self.random:
-            raise SyntaxError("No parameter was provided for sequence, rgb, random, or chaos. Please provide a parameter for one of these values")
-
-
-    def seperate_pins(self):
-        self.red_pin = self.pins[0]
-        self.green_pin = self.pins[1]
-        self.blue_pin = self.pins[2]
-        self.red_channel = self.pin_channels[0]
-        self.green_channel = self.pin_channels[1]
-        self.blue_channel = self.pin_channels[2]
-
+    def __separate_channels(self):
+        self.red_channel = self.channels[0]
+        self.green_channel = self.channels[1]
+        self.blue_channel = self.channels[2]
 
     def start(self):
         """
         Starts the correct function based on the parameters that were passed in
         """
 
-
         logging.info("Started an LED Strip Blink Animation")
-        self.start_correct_function()
+        self.__start_correct_function()
 
+    def __start_correct_function(self):
 
-    def start_correct_function(self):
-        if self.sequence_exist():
-            function = self.get_correct_sequence_function()
-            self.call_function_timeout_times(function)
+        if self.__sequence_exist():
+            function = self.__get_correct_sequence_function
+            self.__call_function_timeout_times(function)
         elif self.random and self.soft:
-            if self.random_rgb_start != None:
+            if self.random_rgb_start is not None:
                 self.current_random_rgb = self.random_rgb_start
             else:
-                self.current_random_rgb = self.get_random_rgb()
-            self.call_function_timeout_times(self.random_soft_start)
+                self.current_random_rgb = self.__get_random_rgb()
+            self.__call_function_timeout_times(self.__random_soft_start)
         elif self.random:
-            if self.interval_sequence != None:
+            if self.interval_sequence is not None:
                 self.current_interval_index = -1
-            self.call_function_timeout_times(self.random_start)
+            self.__call_function_timeout_times(self.__random_start)
         elif self.chaos:
-            self.call_function_timeout_times(self.chaos_start)
+            self.__call_function_timeout_times(self.__chaos_start)
         else:
-            self.call_function_timeout_times(self.regular_start)
+            self.__call_function_timeout_times(self.__regular_start)
 
+    def __sequence_exist(self):
 
-    def sequence_exist(self):
-        if self.sequence != None:
+        if self.sequence is not None:
             return True
         else:
             return False
 
+    def __get_correct_sequence_function(self):
 
-    def get_correct_sequence_function(self):
         if self.random_sequence and self.soft:
-            self.current_random_rgb = self.get_random_rgb_from_sequence_index()
-            return self.go_through_sequence_randomly_softly
+            self.current_random_rgb = self.__get_random_rgb_from_sequence_index()
+            return self.__go_through_sequence_randomly_softly
         elif self.random_sequence:
-            return self.go_through_sequence_randomly
+            return self.__go_through_sequence_randomly
         elif self.soft:
             self.current_index = 0
-            return self.go_through_sequence_softly
+            return self.__go_through_sequence_softly
         else:
-            return self.go_through_sequence
+            return self.__go_through_sequence
 
+    def __go_through_sequence_randomly_softly(self):
 
-    def go_through_sequence_randomly_softly(self):
-        logging.info("Starting random soft sequence LED Strip Animation")
+        logging.info("Starting random_flag soft sequence LED Strip Animation")
         current_random_rgb = self.current_random_rgb
-        next_random_rgb = self.get_random_rgb_from_sequence_index()
+        next_random_rgb = self.__get_random_rgb_from_sequence_index()
         self.go_to_color(current_random_rgb.rgb, next_random_rgb.rgb)
         self.current_random_rgb = next_random_rgb
 
+    def __get_random_rgb_from_sequence_index(self):
 
-    def get_random_rgb_from_sequence_index(self):
         sequence_size = len(self.sequence) - 1
         random_index = random.randint(0, sequence_size)
         random_rgb = self.sequence[random_index]
         return random_rgb
 
-
     def go_to_color(self, current_rgb, next_rgb):
+        """
+        Go from current_rgb to next_rgb one rgb value at a time. Going through the following values: red, green, blue
+
+        :param current_rgb : starting rgb value
+        :param next_rgb : ending rgb value
+        """
+
         color_one = ColorChooser(current_rgb)
         color_two = ColorChooser(next_rgb)
-        current_red, current_green, current_blue = color_one.seperate_rgb()
-        next_red, next_green, next_blue = color_two.seperate_rgb()
+        current_red, current_green, current_blue = color_one.separate_rgb()
+        next_red, next_green, next_blue = color_two.separate_rgb()
+
         logging.info("Changing LED Strip color from {} to {}".format(current_rgb, next_rgb))
-        self.increase_decrease(current_red, next_red, self.red_pin, self.red_channel)
-        self.increase_decrease(current_green, next_green, self.green_pin, self.green_channel)
-        self.increase_decrease(current_blue, next_blue, self.blue_pin, self.blue_channel)
+        self.__increase_decrease(current_red, next_red, self.red_channel)
+        self.__increase_decrease(current_green, next_green, self.green_channel)
+        self.__increase_decrease(current_blue, next_blue, self.blue_channel)
         logging.info("Changed LED Strip color from {} to {}".format(current_rgb, next_rgb))
+
         self.current_color = next_rgb
 
+    def __increase_decrease(self, color, second_color, channel):
 
-    def increase_decrease(self, color, second_color, pin, channel):
         if color > second_color:
-            self.decrease_color_to_color(color, second_color, pin, channel)
+            self.__decrease_color_to_color(color, second_color, channel)
         else:
-            self.increase_color_to_color(color, second_color, pin, channel)
+            self.__increase_color_to_color(color, second_color, channel)
 
+    def __decrease_color_to_color(self, first_color, second_color, channel):
 
-    def decrease_color_to_color(self, first_color, second_color, pin, channel):
-        for color in range(first_color, second_color-1, -1):
-            #on_value = int(((color / 255) * 4095))
-            off_value = int(4095 - ((color / 255) * 4095))
-            pin.write(channel, 0, off_value)
+        for color in range(first_color, second_color - 1, -1):
+            self.change_channel_color(color, channel)
             time.sleep(self.interval)
 
+    def __increase_color_to_color(self, first_color, second_color, channel):
 
-    def increase_color_to_color(self, first_color, second_color, pin, channel):
-        for color in range(first_color, second_color-1):
-            #on_value = int(((color / 255) * 4095))
-            off_value = int(4095 - ((color / 255) * 4095))
-            pin.write(channel, 0, off_value)
+        for color in range(first_color, second_color - 1):
+            self.change_channel_color(color, channel)
             time.sleep(self.interval)
 
+    def change_channel_color(self, color, channel):
+        """
+        Change a single channel's color to specified color
 
-    def call_function_timeout_times(self, function):
+        :param color : rgb color value
+        :param channel : channel of the
+        """
+
+        value = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(color)
+        self.pwm.write(channel, 0, value)
+
+    def __call_function_timeout_times(self, function):
         while self.timeout >= 0:
             function()
             self.timeout -= 1
 
-
-    def go_through_sequence_randomly(self):
-        logging.info("Starting random sequence LED Strip Animation")
-        random_rgb = self.get_random_rgb_from_sequence_index()
+    def __go_through_sequence_randomly(self):
+        logging.info("Starting random_flag sequence LED Strip Animation")
+        random_rgb = self.__get_random_rgb_from_sequence_index()
         self.change_strip_color(random_rgb)
         time.sleep(self.interval)
 
-
-    def go_through_sequence_softly(self):
+    def __go_through_sequence_softly(self):
         logging.info("Starting softly sequence LED Strip Animation")
         current_rgb = self.sequence[self.current_index]
 
-        if self.current_index == len(self.sequence)-2:
+        if self.current_index == len(self.sequence) - 2:
             self.current_index = 0
             next_rgb = self.sequence[self.current_index]
         else:
-            next_rgb = self.sequence[self.current_index+1]
+            next_rgb = self.sequence[self.current_index + 1]
 
         self.go_to_color(current_rgb, next_rgb)
         self.current_index += 1
 
-
     def change_strip_color(self, rgb):
-        #logging.info("Changing LED Strip color to {}".format(rgb))
+        """
+        Change the strip color to the specified strip value
+
+        :param rgb : rgb value in a list. [red, green, blue]
+        """
+
+        logging.info("Changing LED Strip color to {}".format(rgb))
+
         self.current_color = rgb
-        red_on, red_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
-        green_on, green_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
-        blue_on, blue_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
-        self.red_pin.write(self.red_channel, 0, red_off)
-        self.green_pin.write(self.green_channel, 0, green_off)
-        self.blue_pin.write(self.blue_channel, 0, blue_off)
+        red_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[0])
+        green_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[1])
+        blue_off = ColorChooser([0, 0, 0]).convert_rgb_to_rpi(rgb[2])
 
+        self.pwm.write(self.red_channel, 0, red_off)
+        self.pwm.write(self.green_channel, 0, green_off)
+        self.pwm.write(self.blue_channel, 0, blue_off)
 
-    def go_through_sequence(self):
+    def __go_through_sequence(self):
         logging.info("Starting regular sequence LED Strip Animation")
         for rgb in self.sequence:
             self.change_strip_color(rgb)
             time.sleep(self.interval)
 
-
-    def random_soft_start(self):
-        logging.info("Starting random soft LED Strip Animation")
+    def __random_soft_start(self):
+        logging.info("Starting random_flag soft LED Strip Animation")
         current_random_rgb = self.current_random_rgb
-        next_random_rgb = self.get_random_rgb()
+        next_random_rgb = self.__get_random_rgb()
         self.go_to_color(current_random_rgb, next_random_rgb)
         self.current_random_rgb = next_random_rgb
 
-
-    def get_random_rgb(self):
-        rgb = []
+    def __get_random_rgb(self):
+        rgb = list()
         rgb.append(random.randint(0, 255))
         rgb.append(random.randint(0, 255))
         rgb.append(random.randint(0, 255))
         return rgb
 
-
-    def random_start(self):
-        logging.info("Starting random LED Strip Animation")
-        rgb = self.get_random_rgb()
+    def __random_start(self):
+        logging.info("Starting random_flag LED Strip Animation")
+        rgb = self.__get_random_rgb()
         self.change_strip_color(rgb)
-        if self.interval_sequence != None:
-            self.current_interval_index +=1
+        if self.interval_sequence is not None:
+            self.current_interval_index += 1
             self.interval = self.interval_sequence[self.current_interval_index]
         time.sleep(0.1)
         self.change_strip_color([255, 255, 255])
         time.sleep(self.interval)
 
-
-    def regular_start(self):
+    def __regular_start(self):
         logging.info("Starting regular LED Strip Animation")
         self.change_strip_color(self.rgb)
         time.sleep(self.interval)
         self.change_strip_color([0, 0, 0])
         time.sleep(self.interval)
 
-    def chaos_start(self):
-        logging.info("Starting choas LED Strip Animation")
-        interval = random.randint(0, 100)/100
-        rgb = self.get_random_rgb()
+    def __chaos_start(self):
+        logging.info("Starting chaos LED Strip Animation")
+        interval = random.randint(0, 100) / 100
+        rgb = self.__get_random_rgb()
         self.change_strip_color(rgb)
         time.sleep(interval)
 
-
     def __repr__(self):
-        return "Blink the LED Strip @ pins: {}, {}, {}".format(self.pins[0], self.pins[1], self.pins[2])
-
+        return "Blink the LED Strip @ channel: {}, {}, {}".format(self.channels[0], self.channels[1], self.channels[2])
 
     def __str__(self):
         return "Blink an LED Strip with {}s between blinks.".format(self.interval)
 
 
-class ColorChooser():
+class ColorChooser:
     """
-    Holder for colors in two types. rpi, a 0-1 value (mostly used in the gpiozero.PWMLED)\
-    rgb, a 0-255 value.
+    Holder for colors in two types. Driver, 0-4095, and rgb, a 0-255 value.
     """
+
     def __init__(self, rgb):
         self.rgb = rgb
         self.rpi = []
         self.red, self.green, self.blue = self.get_converted_colors(self.rgb)
-
 
     def set_color(self, rgb):
         """
@@ -286,24 +301,14 @@ class ColorChooser():
         :param rgb : list of rgb values. Arranged as so [red, green, blue]
         """
 
-
         self.rgb = rgb
-        self.rpi = []
         self.red, self.green, self.blue = self.get_converted_colors(self.rgb)
-
 
     def get_converted_colors(self, colors):
         red = self.convert_rgb_to_rpi(colors[0])
         green = self.convert_rgb_to_rpi(colors[1])
         blue = self.convert_rgb_to_rpi(colors[2])
         return red, green, blue
-
-
-    def set_rpi(self):
-        self.rpi.append(self.red)
-        self.rpi.append(self.green)
-        self.rpi.append(self.blue)
-
 
     def __repr__(self):
         return "ColorChooser Object {}, red={}, green={}, blue={}".format(self, self.red, self.green, self.blue)
@@ -313,32 +318,23 @@ class ColorChooser():
 
     def convert_rgb_to_rpi(self, color):
         """
-        Converts the rgb value, the parameter, into a rpi value.
+        Converts the rgb value, the parameter, into a driver value (0-4095)
 
         :param color : rgb value to be converted
         """
 
-
-        # RPi uses values 0-100 to determine the brightness of the r, g, or b
-        # So to convert regular rgb values to rpi values we need to divide by 255
+        # Driver uses values 0-4095 to determine the brightness of the r, g, or b
+        # So to convert regular rgb values to the drivers values we need to divide by 255
         # Then multiple it by 4095 so that the pwm pin can read the value
-        on_color = int(((color / 255) * 4095))
+        # Then do 4095 minus the value, and round. (Driver doesn't take floats)
         off_color = int(4095 - ((color / 255) * 4095))
-        return on_color, off_color
+        return off_color
 
-
-    def seperate_rpi(self):
-        red = self.rpi[0]
-        green = self.rpi[1]
-        blue = self.rpi[2]
-        return red, green , blue
-
-
-    def seperate_rgb(self):
+    def separate_rgb(self):
         red = self.rgb[0]
         green = self.rgb[1]
         blue = self.rgb[2]
-        return red, green , blue
+        return red, green, blue
 #
 # class Color():
 #     """
